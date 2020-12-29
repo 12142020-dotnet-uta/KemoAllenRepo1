@@ -6,7 +6,6 @@ namespace P0_KemoAllen
     public class Order
     {
         public Order(){
-            timeCreated = DateTime.Now;
 
         }
 
@@ -43,7 +42,7 @@ namespace P0_KemoAllen
         // }
         
         //Order time
-        public DateTime timeCreated { get; set;}
+        public DateTime timeCreated { get; set;} = DateTime.Now;
         // public DateTime GetTimeCreated(){
         //     return timeCreated;
         // }

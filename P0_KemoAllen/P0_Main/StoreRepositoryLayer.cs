@@ -9,7 +9,7 @@ namespace P0_KemoAllen
     {
         // int numberOfProducts = Enum.GetNames(typeof(ProductList)).Length; //Gets the number of products in the product list
         Store_DbContext DbContext = new Store_DbContext();
-        //DbSet<Product> products; //Database set of products
+        DbSet<Product> products; //Database set of products
         DbSet<Customer> customers; //Database set of customers
         DbSet<Order> orders; //Database set of orders
         DbSet<Location> locations; //Database set of locations
@@ -26,6 +26,7 @@ namespace P0_KemoAllen
             orders = DbContext.orders;
             locations = DbContext.locations;
             inventory = DbContext.inventory;
+            products = DbContext.products;
         }
         /// <summary>
         /// Returns matching all objects in List<Customer>
@@ -51,10 +52,13 @@ namespace P0_KemoAllen
         {
             return locations.ToList();
         }
-        public void AddListItemsToDB()
-        {
-            
-        }
+        // public void AddListItemsToDB()
+        // {
+        //     foreach(var item in list)
+        //     {
+
+        //     }
+        // }
         /// <summary>
         /// Converts name input into a 2 element string array
         /// </summary>
@@ -215,6 +219,9 @@ namespace P0_KemoAllen
                 
                 //Get the item requested
                 prod = order.orderLocation.locationInventory.OrderProduct(itemNumber, numOfItem);
+                //Add product to list
+                products.Add(prod);
+                DbContext.SaveChanges();
                 //Add to the order
                 order.AddToOrder(prod);
                 DbContext.SaveChanges();

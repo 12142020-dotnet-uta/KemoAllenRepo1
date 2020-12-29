@@ -51,6 +51,8 @@ namespace P0_KemoAllen
              ProductsList.Add(5, rice);
 
         }
+
+        
         /// <summary>
         /// Retrieves a product based on the given int id and quantity desired.
         /// A new Product object with quantity set to the accepted quantity taken.
