@@ -44,7 +44,7 @@ namespace P0_KemoAllen
             {
                 Console.WriteLine($"Hello {user.FirstName} What would you like to do?");
                 Console.WriteLine("\tThe Menu options are:\n\torder - To make a new order\n\td1 - Display a customer's order history"
-                +"\n\td2 - Display a location's order history\n\t search - To lookup a customer\n\t d3 - Display an order's content\n\t q - Quit");
+                +"\n\td2 - Display a location's order history\n\tsearch - To lookup a customer\n\td3 - Display an order's content\n\tq - Quit");
                 menuChoice = Console.ReadLine();
 
                 //user portal

@@ -107,33 +107,6 @@ namespace P0_KemoAllen
                 DbContext.SaveChanges();
             }
 
-            // bool customerFound = false;
-
-            // foreach(var item in customers)
-            // {
-            //     if(item.FirstName.Equals(userName[0]))
-            //     {
-            //         if(item.LastName.Equals(userName[1]))
-            //         {
-            //             user = item;
-            //             customerFound = true;
-            //             //Console.WriteLine("Old User " + user.FirstName);
-            //             break;
-            //         }
-            //     }
-
-            // }
-
-            // if(!customerFound)
-            // {
-            //     user.FirstName = userName[0];
-            //     user.LastName = userName[1];
-
-            //     customers.Add(user);
-            //     DbContext.SaveChanges();
-            //     //Console.WriteLine("New User "+ user.FirstName);
-            // }
-
             return user;
         }
         /// <summary>

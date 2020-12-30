@@ -126,7 +126,7 @@ namespace P0_KemoAllen
         {
             int numberTaken = 0;
             Console.WriteLine("Items ordered " + numOfItem);
-            Console.WriteLine("Quantity available " + p.Quantity);
+            Console.WriteLine("Quantity available " + p.quantity);
 
             //Check if the Product requested exists
             if(p != null)
@@ -168,7 +168,7 @@ namespace P0_KemoAllen
                 }
                 
             }
-            Console.WriteLine("Quantity now " + p.Quantity);
+            Console.WriteLine("Quantity now " + p.quantity);
             return numberTaken;
         }
     }//Inventory
