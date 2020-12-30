@@ -10,6 +10,7 @@ namespace P0_KemoAllen
         public DbSet<Location> locations {get; set;}
         public DbSet<Order> orders {get; set;}
         public DbSet<Inventory> inventory {get; set;}
+        public DbSet<Product> products {get; set;}
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

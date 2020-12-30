@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-
+using System;
 namespace P0_KemoAllen
 {
     public class Product
@@ -13,6 +13,9 @@ namespace P0_KemoAllen
             this.price = price;
             this.quantity = quantity;
         }
+        //Product id
+        [Key]
+        public Guid productId {get; set;} = Guid.NewGuid();
         
         //Price
         public double price { get; set;}
@@ -39,7 +42,10 @@ namespace P0_KemoAllen
         //     set { description = value; }
         // }
 
-        //
+        /// <summary>
+        /// Override of the ToString() method to display the description.
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return description;
