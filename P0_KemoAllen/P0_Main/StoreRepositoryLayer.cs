@@ -19,6 +19,10 @@ namespace P0_KemoAllen
         {
 
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="context"></param>
         public StoreRepositoryLayer(Store_DbContext context)
         {
             this.DbContext = context;
@@ -174,7 +178,7 @@ namespace P0_KemoAllen
         /// Afterwards asks for an item and a quantity of that item.
         /// </summary>
         /// <param name="user"></param>
-        public void EditOrder(Customer user){ 
+        public Guid EditOrder(Customer user){ 
             Order order = new Order();
             int itemNumber, numOfItem;
             bool validNumber = false;
@@ -220,11 +224,14 @@ namespace P0_KemoAllen
                 //Get the item requested
                 prod = order.orderLocation.locationInventory.OrderProduct(itemNumber, numOfItem);
                 //Add product to list
+                if(prod.quantity > 0)
+                {
                 products.Add(prod);
                 DbContext.SaveChanges();
                 //Add to the order
                 order.AddToOrder(prod);
                 DbContext.SaveChanges();
+                }
                 Console.WriteLine("Would you like to continue your order?");
                 consoleInput = Console.ReadLine(); 
 
@@ -234,13 +241,8 @@ namespace P0_KemoAllen
             DbContext.SaveChanges();
             //Display current receipt
             //DisplayOrder(order.orderId);
-            
+            return order.orderId;
         }//EditOrder
-
-
-
-
-
         
     }
 }

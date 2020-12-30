@@ -11,6 +11,10 @@ namespace P0_KemoAllen
         public Dictionary<int, Product> ProductsList = new Dictionary<int, Product>();
 
         [Key]
+        /// <summary>
+        /// The id of the inventory.
+        /// </summary>
+        /// <returns>Guid</returns>
         public Guid inventoryId {get; set;} = new Guid();
         
         /// <summary>
@@ -59,7 +63,7 @@ namespace P0_KemoAllen
         /// </summary>
         /// <param name="itemToOrder"></param>
         /// <param name="numOfItem"></param>
-        /// <returns></returns>
+        /// <returns>A product with an altered quantity</returns>
         public Product OrderProduct(int itemToOrder, int numOfItem)
         {   
             int quantityUsed;
@@ -82,7 +86,7 @@ namespace P0_KemoAllen
         /// Searches for a product based on the given int id.
         /// </summary>
         /// <param name="itemToOrder"></param>
-        /// <returns></returns>
+        /// <returns>The Product of Key value</returns>
         public Product FindProduct(int itemToOrder)
         {
             Product p = new Product();
@@ -121,8 +125,8 @@ namespace P0_KemoAllen
         public int DecrementQuantity(Product p, int numOfItem)
         {
             int numberTaken = 0;
-            //Console.WriteLine("Items ordered " + numOfItem);
-            //Console.WriteLine("Quantity" + p.Quantity);
+            Console.WriteLine("Items ordered " + numOfItem);
+            Console.WriteLine("Quantity available " + p.Quantity);
 
             //Check if the Product requested exists
             if(p != null)
@@ -134,6 +138,8 @@ namespace P0_KemoAllen
                     {
                         if(p.quantity < numOfItem)
                         {
+                            // Console.WriteLine("Sorry the amount requested is greater than what is available.");
+                            // numTaken = 0;
                             numberTaken = p.quantity;
                             p.quantity -= p.quantity;
                         }
@@ -148,6 +154,8 @@ namespace P0_KemoAllen
                     {
                         if(p.quantity < numOfItem)
                         {
+                            // Console.WriteLine("Sorry the amount requested is greater than what is available.");
+                            // numTaken = 0;
                             numberTaken = p.quantity;
                             p.quantity -= p.quantity;
                         }
@@ -160,7 +168,7 @@ namespace P0_KemoAllen
                 }
                 
             }
-        //Console.WriteLine("Quantity now " + p.Quantity);
+            Console.WriteLine("Quantity now " + p.Quantity);
             return numberTaken;
         }
     }//Inventory

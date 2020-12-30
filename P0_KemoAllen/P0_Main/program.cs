@@ -51,9 +51,12 @@ namespace P0_KemoAllen
                 switch(menuChoice)
                 {
                 case "order":
-                storeContext.EditOrder(user); //adds or remove items from an order list
+                id = storeContext.EditOrder(user); //adds or remove items from an order list
+                DisplayOrder(id);
                 break;
                 case "d3": //Displays an order's details
+                Console.WriteLine("Please enter the order id.");
+                id = Guid.Parse(Console.ReadLine());
                 DisplayOrder(id);
                 break;
                 case "d1"://shows all customer order information history 

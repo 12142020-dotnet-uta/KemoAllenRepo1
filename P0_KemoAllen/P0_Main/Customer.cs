@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace P0_KemoAllen
 {
-    public class Customer
+    public class Customer:User
     {
         public Customer()
         {
