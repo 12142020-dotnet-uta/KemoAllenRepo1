@@ -67,16 +67,18 @@ namespace P0_KemoAllen
         /// Converts name input into a 2 element string array
         /// </summary>
         /// <returns></returns>
-        public string[] RetrieveUser() 
+        public string[] GetFirstAndLastName() 
         {
-            string[] userName;
+            string[] names;
             bool nameValid = false;
+
+            Console.WriteLine("Please enter your first and last name.");
 
             do
             {
-                userName = Console.ReadLine().Trim().Split(' ');
+                names = Console.ReadLine().Trim().Split(' ');
 
-                if(userName.Length != 2)      
+                if(names.Length != 2)      
                 {
                     Console.WriteLine("Sorry the name that you entered was invalid. Please try again.");
                     nameValid = false;
@@ -86,23 +88,56 @@ namespace P0_KemoAllen
 
             }while(!nameValid);
 
-            return userName;
-        }//LogIn
+            return names;
+        }//GetFirstAndLastName
         /// <summary>
-        /// Takes in a 2 element array containing a user's first and last names.
-        /// Then either adds a new customer or gets an old customer from the list.
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public string CheckUserName()
+        {
+            string userName;
+            bool valid = false;
+
+            do
+            {
+                userName = Console.ReadLine().Trim();
+                //If userName has a value return true
+                if(!userName.equals(""))
+                {
+                    valid = true;
+                }
+                else
+                {
+                    Console.WriteLine("Sorry the name you entered wasn't valid try again.");
+                }
+            }while(!valid);
+
+            return userName;
+
+        }
+        /// <summary>
+        /// Asks for the user to enter their user name. If that user is already registed return that user.
+        /// If the user is not registered then add the new user and ask for their credentials.
         /// </summary>
         /// <param name="userName"></param>
         /// <returns> Customer Object</returns>
-        public Customer LogIn(string [] userName) 
+        public Customer LogIn() 
         {
+            string userName;
+            string [] actualName;
             Customer user = new Customer();
+
+            Console.WriteLine("Please enter your user name.");
+            userName = CheckUserName();
+
             //Console.WriteLine(userName[0] + userName[1]);
-            user = customers.Where(x => x.FirstName == userName[0] && x.LastName == userName[1]).FirstOrDefault();
+            user = customers.Where(x => x.UserName == userName).FirstOrDefault();
 
             if(user == null)
             {
-                user = new Customer(userName[0], userName[1]);
+                actualName = GetFirstAndLastName();
+                user = new Customer(actualName[0], actualName[1], userName);
                 customers.Add(user);
                 DbContext.SaveChanges();
             }
@@ -114,13 +149,21 @@ namespace P0_KemoAllen
         ///  or returns a matching loaction.
         /// </summary>
         /// <returns>Location Object</returns>
-        public Location SelectLocation(){
+        public Location SelectLocation()
+        {
             string locName;
             bool locationFound = false;
             Location loc = new Location();
             //Inventory inv = new Inventory();
 
-            Console.WriteLine("Which location are you ordering from?");
+            Console.WriteLine("Which location are you ordering from? " +
+            "If the name you input is not here a new locaiton wil be added.");
+            foreach (var item in locations)
+            {
+                Console.WriteLine("\t" + item.locationName);   
+            }
+            
+
             locName = Console.ReadLine();
 
             foreach(var item in locations)
@@ -151,15 +194,13 @@ namespace P0_KemoAllen
         /// Afterwards asks for an item and a quantity of that item.
         /// </summary>
         /// <param name="user"></param>
-        public Guid EditOrder(Customer user){ 
+        public Guid EditOrder(Customer user)
+        { 
             Order order = new Order();
             int itemNumber, numOfItem;
-            bool validNumber = false;
-            string consoleInput;
-            //Location loc = SelectLocation();
-            //Inventory inv = new Inventory();
+            //bool validNumber = false;
+            //string consoleInput;
             Product prod;
-            //Guid guid;
 
             //Add the customer to the order
             order.orderCustomer = user;
@@ -169,30 +210,12 @@ namespace P0_KemoAllen
             do
             {
                 //Get item number and check if it is valid
-                do
-                {
-                    Console.WriteLine("What would you like to add to the order?");
-                    consoleInput = Console.ReadLine();
-                    validNumber = int.TryParse(consoleInput, out itemNumber);
-                    if(!validNumber)
-                        {   
-                        Console.WriteLine("The number that you entered was invalid.");
-                        }
-
-                }while(!validNumber); 
+                Console.WriteLine("What would you like to add to the order?");
+                itemNumber = ParseCheckInt();
+            
                 //Get quantity of item and check if it is valid
-                validNumber = false;
-                do
-                {
-
-                    Console.WriteLine("How many would you like to order?");
-                    consoleInput = Console.ReadLine();
-                    validNumber = int.TryParse(consoleInput, out numOfItem);
-                    if(!validNumber)
-                        {   
-                        Console.WriteLine("The number that you entered was invalid.");
-                        }
-                }while(!validNumber);
+                Console.WriteLine("How many would you like to order?");
+                numOfItem = ParseCheckInt();
                 
                 //Get the item requested
                 prod = order.orderLocation.locationInventory.OrderProduct(itemNumber, numOfItem);
@@ -205,7 +228,7 @@ namespace P0_KemoAllen
                 order.AddToOrder(prod);
                 DbContext.SaveChanges();
                 }
-                Console.WriteLine("Would you like to continue your order?");
+                Console.WriteLine("Would you like to continue your order? (y/n)");
                 consoleInput = Console.ReadLine(); 
 
             }while(consoleInput != "no" && consoleInput != "n");
@@ -216,6 +239,58 @@ namespace P0_KemoAllen
             //DisplayOrder(order.orderId);
             return order.orderId;
         }//EditOrder
+
+        /// <summary>
+        /// This method takes a user input and tries to parse it to an int.
+        /// If the int was invalid the user will be prompted to enter a value again.
+        /// </summary>
+        /// <returns></returns>
+        public int ParseCheckInt()
+        {
+            bool validNumber = false;
+            String input;
+            int output;
+
+            do
+            {
+                consoleInput = Console.ReadLine();
+                validNumber = int.TryParse(input, out output);
+                    if(!validNumber)
+                        {   
+                        Console.WriteLine("The number that you entered was invalid. Try again.");
+                        }
+            } while (!validNumber);
+
+            return output;
+        }//ParseCheckInt
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void DisplayAvailableLocations()
+        {
+            foreach(var location in locations)
+            {
+                location.ToString();
+            }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public void DisplayAvailableProducts()
+        {
+            foreach(var product in products)
+            {
+                product.ToString();
+            }
+        }
+        public void DisplayAvailableCustomers()
+        {
+            foreach(var customer in customers)
+            {
+                customer.ToString();
+            }
+        }
         
     }
 }

@@ -42,10 +42,6 @@ namespace P0_KemoAllen
         //     set { description = value; }
         // }
 
-        /// <summary>
-        /// Override of the ToString() method to display the description.
-        /// </summary>
-        /// <returns></returns>
         public override string ToString()
         {
             return description;

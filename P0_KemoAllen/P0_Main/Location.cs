@@ -39,7 +39,10 @@ namespace P0_KemoAllen
         //     set { locationInventory = value; }
         // }
         
-
+        public override string ToString()
+        {
+            return locationName;
+        }
         
     }
 }

@@ -13,21 +13,19 @@ namespace P0_KemoAllen
             Console.WriteLine("\t\tWelcome to AllenCo!");
 
             string logInChoice = "y"; //The program starts by default
-            string [] userName;
+            //string [] userName;
             Customer user = new Customer();
             do
             {
-                Console.WriteLine("Would you like to Log in?");
+                Console.WriteLine("Would you like to Log in? (y/n)");
                 logInChoice = Console.ReadLine();
                 if(logInChoice == "y")
                 {
                 Console.WriteLine("\tThis is the Log-in screen");
-                Console.WriteLine("Please enter your first and last name. If they are unique a new user will be added");
-                userName = storeContext.RetrieveUser();
-                user = storeContext.LogIn(userName);
+                user = storeContext.LogIn();
                 MainMenu(user);
                 }
-                Console.WriteLine("Would you like to continue?");
+                Console.WriteLine("Would you like to continue? (y/n)");
                 logInChoice = Console.ReadLine();
             }while(logInChoice == "y");
 
@@ -122,12 +120,6 @@ namespace P0_KemoAllen
             bool orderFound = false;
             Order order = new Order();
 
-            // if(id == null) //Always false? Remove
-            // {
-            // Console.WriteLine("Please enter the order id");
-            // //Get order id
-
-            // }
             List<Order> orders = storeContext.GetOrders();
 
             foreach(var item in orders)
@@ -179,7 +171,6 @@ namespace P0_KemoAllen
                     if(order.orderLocation.locationName == locName)
                     {
                         order.DisplayDetails();
-                        //break;
                     }
                 }
             //}
