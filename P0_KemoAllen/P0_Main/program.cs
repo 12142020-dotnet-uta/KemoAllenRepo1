@@ -74,7 +74,7 @@ namespace P0_KemoAllen
         }//MainMenu
         public static void DisplayCustomerHistory()
         {
-            string[] customerName;
+            string customerName;
             Customer cust = new Customer();
             bool customerFound = false;
 
@@ -128,7 +128,6 @@ namespace P0_KemoAllen
                 {
                     order = item;
                     orderFound = true;
-                    break;
                 }
             }
 
@@ -147,61 +146,53 @@ namespace P0_KemoAllen
             //bool locationFound = false;
             //Location loc = new Location();
             String locName;
+            bool locationFound = false;
 
-            Console.WriteLine("What is the name of the location.");
+            Console.WriteLine("Which location would you like to see?");
+            storeContext.DisplayAvailableLocations();
             locName = Console.ReadLine();
 
             List<Order> orders = storeContext.GetOrders();
 
-            // foreach(var item in locations)
-            // {
-            //     if(item.LocationName.Equals(locName))
-            //     {
-            //         Console.WriteLine("Location found.");   
-            //         loc = item;
-            //         locationFound = true;
-            //         break;
-            //     }
-            // }
+            //Print orders with matching location names 
+            foreach(var order in orders)
+            {
+                if(order.orderLocation.LocationName == locName)
+                 {
+                     order.DisplayDetails();
+                 }
+            }
 
-            //if(locationFound)
-            //{
-                foreach(var order in orders)
-                {
-                    if(order.orderLocation.locationName == locName)
-                    {
-                        order.DisplayDetails();
-                    }
-                }
-            //}
-        }
+            if(!locationFound)
+            {
+                Console.WriteLine("Sorry we could't find that location.");
+            }
+            
+        }//DisplayLoctionHistory
         public static void SearchUser()
         {
-            string [] userSearch;
+            string userSearch;
             bool custFound = false;
-            Guid id = new Guid();
+            Customer user;
 
-            Console.WriteLine("Who are you looking for?");
-            userSearch = storeContext.RetrieveUser();
+            Console.WriteLine("Which user are you looking for? (Enter user name)");
+            userSearch = storeContext.CheckUserName();
 
             List<Customer> customers = storeContext.GetCustomers();
 
             foreach(var cust in customers)
             {
-                if(cust.FirstName == userSearch[0])
+                if(cust.UserName == userSearch)
                 {
-                    if(cust.LastName == userSearch[1])
-                    {
-                        id = cust.userId;
-                        custFound = true;
-                        break;
-                    }
+                    user = cust;
+                    custFound = true;
+                    break;       
                 }
             }
 
             if(custFound)
             {
-                Console.WriteLine(userSearch[0] + "'s user id is: " + id);
+                Console.WriteLine(user.UserName + "'s user id is: " + user.userId);
             }
 
         }//SearchUser

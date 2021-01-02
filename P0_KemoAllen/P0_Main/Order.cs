@@ -19,12 +19,16 @@ namespace P0_KemoAllen
         // }
 
         //List containing the products in an order
-        public List<Product> orderProducts = new List<Product>();
+        // public List<Product> orderProducts = new List<Product>();
 
-        public void AddToOrder(Product p)
-        {
-            orderProducts.Add(p);
-        }
+        // public void AddToOrder(Product p)
+        // {
+        //     orderProducts.Add(p);
+        // }
+
+        public Product orderProduct { get; set; }
+
+        public int orderProductQuantity { get; set; }
         
         //The order's store location
         public Location orderLocation { get; set;}
@@ -46,12 +50,6 @@ namespace P0_KemoAllen
         // public DateTime GetTimeCreated(){
         //     return timeCreated;
         // }
-
-        //Calculate Price
-        public void CostCalc() //Do in DB?
-        {
-            
-        }
 
         public void DisplayDetails()
         {

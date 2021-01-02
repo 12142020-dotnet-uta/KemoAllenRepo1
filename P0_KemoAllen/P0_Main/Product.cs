@@ -8,25 +8,25 @@ namespace P0_KemoAllen
         public Product(){
 
         }
-        public Product(string name, double price, int quantity){
+        public Product(string name, double price){
             this.description = name;
-            this.price = price;
-            this.quantity = quantity;
+            this.unitPrice = unitPrice;
+            //this.quantity = quantity;
         }
         //Product id
         [Key]
         public Guid productId {get; set;} = Guid.NewGuid();
         
-        //Price
-        public double price { get; set;}
-        // public double Price
-        // {
-        //     get { return price; }
-        //     set { price = value; }
-        // }
+        //Price of 1 item
+        private double unitPrice { get; set;}
+        public double UnitPrice
+        {
+            get { return unitPrice; }
+            set { unitPrice = value; }
+        }
 
         //Quantity
-        public int quantity { get; set;}
+        // private int quantity { get; set;}
         // public int Quantity
         // {
         //     get { return quantity; }
@@ -35,12 +35,20 @@ namespace P0_KemoAllen
         
         
         //Description
-        public string description { get; set;}
-        // public string Description
-        // {
-        //     get { return description; }
-        //     set { description = value; }
-        // }
+        private string description { get; set;}
+        public string Description
+        {
+            get { return description; }
+            set { description = value; }
+        }
+
+        //Total cost of all items of available quantity
+        // private double price;
+        // public double Price
+        //  { 
+        //     get { return price; } 
+        //     set {price = unitPrice * quantity;}
+        //  }
 
         public override string ToString()
         {
@@ -48,3 +56,4 @@ namespace P0_KemoAllen
         }
     }
 }
+//run foreach loop and add 

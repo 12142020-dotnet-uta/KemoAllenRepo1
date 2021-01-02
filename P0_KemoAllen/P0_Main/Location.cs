@@ -24,12 +24,12 @@ namespace P0_KemoAllen
         
 
         //Name of Loctation
-        public string locationName { get; set;} 
-        // public string LocationName
-        // {
-        //     get { return locationName; }
-        //     set { locationName = value; }
-        // }
+        private string locationName { get; set;} 
+        public string LocationName
+        {
+            get { return locationName; }
+            set { locationName = value; }
+        }
         
         //Inventory of the location -- List
         public Inventory locationInventory { get; set;} = new Inventory();
