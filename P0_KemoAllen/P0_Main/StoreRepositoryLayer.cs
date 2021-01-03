@@ -9,11 +9,11 @@ namespace P0_KemoAllen
     {
         // int numberOfProducts = Enum.GetNames(typeof(ProductList)).Length; //Gets the number of products in the product list
         Store_DbContext DbContext = new Store_DbContext();
-        // DbSet<Product> products; //Database set of products
-        // DbSet<Customer> customers; //Database set of customers
-        // DbSet<Order> orders; //Database set of orders
-        // DbSet<Location> locations; //Database set of locations
-        // DbSet<Inventory> inventory;
+        DbSet<Product> products; //Database set of products
+        DbSet<Customer> customers; //Database set of customers
+        DbSet<Order> orders; //Database set of orders
+        DbSet<Location> locations; //Database set of locations
+        DbSet<Inventory> inventories;
 
         public StoreRepositoryLayer()
         {
@@ -70,17 +70,17 @@ namespace P0_KemoAllen
         public void AddListItemsToDB()
         {
             //use one strings and one object
-            Product apple = new Product("Apple", 0.29, 100);
+            Product apple = new Product("Apple", 0.29);
             products.Add(apple);
-            Product water = new Product("Water", 0.49, 100);
+            Product water = new Product("Water", 0.49);
             products.Add(water);
-            Product cookie = new Product("Cookies", 2.99, 100);
+            Product cookie = new Product("Cookies", 2.99);
             products.Add(cookie);
-            Product milk = new Product("Milk", 2.49, 100);
+            Product milk = new Product("Milk", 2.49);
             products.Add(milk);
-            Product cabbage = new Product("Cabbage", 1.39, 100);
+            Product cabbage = new Product("Cabbage", 1.39);
             products.Add(cabbage);
-            Product rice = new Product("Rice", 6.99, 100);
+            Product rice = new Product("Rice", 6.99);
             products.Add(rice);
 
             DbContext.SaveChanges();
@@ -90,10 +90,10 @@ namespace P0_KemoAllen
         /// </summary>
         public void LoadItemsToInventory()
         {
-            foreach (var product in products)
-            {
+            // foreach (var product in products)
+            // {
                 
-            }
+            // }
         }
         /// <summary>
         /// Converts name input into a 2 element string array
@@ -135,7 +135,7 @@ namespace P0_KemoAllen
             {
                 userName = Console.ReadLine().Trim();
                 //If userName has a value return true
-                if(!userName.equals(""))
+                if(!userName.Equals(""))
                 {
                     valid = true;
                 }
@@ -196,7 +196,7 @@ namespace P0_KemoAllen
 
             foreach(var item in locations)
             {
-                if(item.locationName.Equals(locName))
+                if(item.LocationName.Equals(locName))
                 {
                     loc = item;
                     locationFound = true;
@@ -225,8 +225,9 @@ namespace P0_KemoAllen
             Order order = new Order();
             int numOfItem;
             string consoleInput;
-            Product prod, orderProd;
+            //Product prod, orderProd;
             Inventory inv;
+            bool quantityAvailable;
 
             //Add the customer to the order
             order.orderCustomer = user;
@@ -240,22 +241,19 @@ namespace P0_KemoAllen
                 //Get item name and check if it is valid
                 Console.WriteLine("What would you like to add to the order?");
                 DisplayAvailableProducts();
-                inv = FindProduct();
+                inv = FindProduct(order.orderLocation);
             
                 //Get quantity of item and check if it is valid
                 Console.WriteLine("How many would you like to order?");
                 numOfItem = ParseCheckInt();
-                //inventory
                 //Get the item requested
-                orderProd = TakeFromProductListAddToOrder(prod, numOfItem);
-               
-               //Add to the order and add order to DB
-                if(orderProd.quantity > 0)
+                quantityAvailable = CheckIfQuantityAvailable(inv, numOfItem);
+                 //Add to the order and add order to DB
+                if(quantityAvailable)
                 {
-                order.AddToOrder(orderProd);
-                orders.Add(order);
-                DbContext.SaveChanges();
+                    TakeFromInventoryAddToOrder(inv, numOfItem, order);
                 }
+
                 Console.WriteLine("Would you like to continue your order? (y/n)");
                 consoleInput = Console.ReadLine(); 
 
@@ -275,13 +273,13 @@ namespace P0_KemoAllen
         public int ParseCheckInt()
         {
             bool validNumber = false;
-            String input;
+            String consoleInput;
             int output;
 
             do
             {
                 consoleInput = Console.ReadLine();
-                validNumber = int.TryParse(input, out output);
+                validNumber = int.TryParse(consoleInput, out output);
                     if(!validNumber)
                         {   
                         Console.WriteLine("The number that you entered was invalid. Try again.");
@@ -323,45 +321,37 @@ namespace P0_KemoAllen
             return inv;
         }
         /// <summary>
-        /// Decrements the Quantity of a Product by the number passed in.
-        /// The maximum number of items that can be taken at once is ten.
-        /// If the Quantity requested is greater than what is avaialbe then the remaining quantity will be sent.
+        /// Checks if it is possible to take the requested quantity away from the inventory.
+        /// Returns false if the input is too great for the current quantity.
         /// </summary>
         /// <param name="p"></param>
         /// <param name="numOfItem"></param>
-        public Product TakeFromProductListAddToOrder(Product p, int numOfItem, Location loc)
+        public bool CheckIfQuantityAvailable(Inventory inv, int numOfItem)
         {
+            bool quantityAvailable = false;
             Product orderP = new Product();
-            orderP.Quantity = 0;
 
             //Check if the Product requested exists
-            if(p != null)
+            if(inv != null)
             {
                 //Check if the quantity is available
-                if(p.quantity > 0)
+                if(inv.inventoryQuantity > 0)
                 {
                     if(numOfItem > 10)
                     {
-                        Console.WriteLine("Sorry. You asked for " + numOfItem + $" {p.Description}(s), but the limit is 10.");
+                        Console.WriteLine("Sorry. You asked for " + numOfItem + $" {inv.inventoryProduct.Description}(s), but the limit is 10.");
                         
                     }
                     else if(numOfItem > 0)
                     {
-                        if(p.quantity < numOfItem)
+                        if(inv.inventoryQuantity < numOfItem)
                         {
-                            Console.WriteLine("Sorry. You asked for " + numOfItem + $" {p.Description}(s), but there is only {p.Quantity} left.");
+                            Console.WriteLine("Sorry. You asked for " + numOfItem + $" {inv.inventoryProduct.Description}(s),"
+                             + $" but there is only {inv.inventoryQuantity} left.");
                         }
                         else
                         {
-                            //Decrement from the main product
-                            numberTaken = numOfItem;
-                            p.Quantity -= numOfItem;
-                            DbContext.SaveChanges();
-                            Console.WriteLine($"Success! The quantity of {p.Description} is now {p.Quantity}.");
-                            //Copy information into the order product
-                            orderP.Description = p.Description;
-                            orderP.UnitPrice = p.UnitPrice;
-                            orderP.Quantity = numOfItem;
+                            quantityAvailable = true;
 
                         }
                     }
@@ -369,7 +359,27 @@ namespace P0_KemoAllen
                 
             }
                         
-            return orderP;
+            return quantityAvailable;
+        }
+        /// <summary>
+        /// Decrements the quantity from the inventory and adds the amount take to the order
+        /// and adds the Product to the order.
+        /// </summary>
+        /// <param name="inv"></param>
+        /// <param name="numOfItem"></param>
+        /// <param name="orderP"></param>
+        public void TakeFromInventoryAddToOrder(Inventory inv, int numOfItem, Order orderP)
+        {
+            //Decrement from the main product
+            inv.inventoryQuantity -= numOfItem;
+            Console.WriteLine($"Success! The quantity of {inv.inventoryProduct.Description} is now {inv.inventoryQuantity}.");
+            //Copy information into the order product
+            orderP.orderProduct = inv.inventoryProduct;
+            orderP.orderQuantity = inv.inventoryQuantity;
+            //Add to the list of orders
+            orders.Add(orderP);
+            //Update DB
+            DbContext.SaveChanges();
         }
         /// <summary>
         /// Takes in the location and name of the desired item.
@@ -379,7 +389,7 @@ namespace P0_KemoAllen
         /// <returns>The inventory product that matches the two inputs.</returns>
         public Inventory GetInvetoryItem(String itemName, Location loc)
         {
-            Inventory inv;
+            Inventory inv = new Inventory();
             foreach(var inventory in inventories)
             {
                 if(loc.locationInventory == inventory)

@@ -79,21 +79,18 @@ namespace P0_KemoAllen
             bool customerFound = false;
 
             Console.WriteLine("Which customer's order history would you like to see?");
-            customerName = storeContext.RetrieveUser();
+            customerName = storeContext.CheckUserName();
 
             List<Customer> customers = storeContext.GetCustomers();
             List<Order> orders = storeContext.GetOrders();
 
             foreach(var item in customers)
             {
-                if(item.FirstName.Equals(customerName[0]))
+                if(item.UserName.Equals(customerName))
                 {
-                    if(item.LastName.Equals(customerName[1]))
-                    {
-                        cust = item;
-                        customerFound = true;
-                        break;
-                    }
+                    cust = item;
+                    customerFound = true;
+                    break; 
                 }
 
             }
@@ -173,7 +170,7 @@ namespace P0_KemoAllen
         {
             string userSearch;
             bool custFound = false;
-            Customer user;
+            Customer user = new Customer();
 
             Console.WriteLine("Which user are you looking for? (Enter user name)");
             userSearch = storeContext.CheckUserName();

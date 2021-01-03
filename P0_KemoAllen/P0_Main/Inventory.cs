@@ -15,7 +15,7 @@ namespace P0_KemoAllen
 
         public Product inventoryProduct {get; set;}
 
-        public int itemQuantity {get; set;} = 100;
+        public int inventoryQuantity {get; set;} = 100;
         
         
         

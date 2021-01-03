@@ -28,7 +28,7 @@ namespace P0_KemoAllen
 
         public Product orderProduct { get; set; }
 
-        public int orderProductQuantity { get; set; }
+        public int orderQuantity { get; set; }
         
         //The order's store location
         public Location orderLocation { get; set;}
@@ -52,12 +52,10 @@ namespace P0_KemoAllen
         // }
 
         public void DisplayDetails()
-        {
-            foreach(var item in orderProducts)
-            {
-            Console.WriteLine($"Order Id: {orderId} \tCustomer Id: {orderCustomer.userId} \tLocation: {orderLocation.locationName} \t "
-            + $"Product: {item.description} \tProduct Quantity: {item.quantity} \t Price: {item.price} \t Time: {timeCreated}");
-            }
+        { 
+            Console.WriteLine($"Order Id: {orderId} \tCustomer Id: {orderCustomer.userId} \tLocation: {orderLocation.LocationName} \t "
+            + $"Product: {orderProduct.Description} \tProduct Quantity: {orderQuantity} \t Price: {orderProduct.UnitPrice} \t Time: {timeCreated}");
+            
         }
         
 
