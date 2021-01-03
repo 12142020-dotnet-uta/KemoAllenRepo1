@@ -11,9 +11,9 @@ namespace P0_KemoAllen
         }
         public Customer(string fName = "null", string lName = "null", string uName = "null")
         {
-            firstName = fName;
-            lastName = lName;
-            userName = uName;
+            this.firstName = fName;
+            this.lastName = lName;
+            this.userName = uName;
 
         }
 

@@ -10,8 +10,8 @@ using P0_KemoAllen;
 namespace P0_KemoAllen.Migrations
 {
     [DbContext(typeof(Store_DbContext))]
-    [Migration("20210103010951_StoreMigration")]
-    partial class StoreMigration
+    [Migration("20210103223617_P0Migration")]
+    partial class P0Migration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -47,6 +47,9 @@ namespace P0_KemoAllen.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("inventoryLocationlocationGuid")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid?>("inventoryProductproductId")
                         .HasColumnType("uniqueidentifier");
 
@@ -54,6 +57,8 @@ namespace P0_KemoAllen.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("inventoryId");
+
+                    b.HasIndex("inventoryLocationlocationGuid");
 
                     b.HasIndex("inventoryProductproductId");
 
@@ -69,23 +74,20 @@ namespace P0_KemoAllen.Migrations
                     b.Property<string>("LocationName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("locationInventoryinventoryId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("locationGuid");
-
-                    b.HasIndex("locationInventoryinventoryId");
 
                     b.ToTable("locations");
                 });
 
             modelBuilder.Entity("P0_KemoAllen.Order", b =>
                 {
-                    b.Property<Guid>("orderId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<DateTime>("timeCreated")
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid?>("orderCustomeruserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("orderId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("orderLocationlocationGuid")
@@ -97,10 +99,7 @@ namespace P0_KemoAllen.Migrations
                     b.Property<int>("orderQuantity")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("timeCreated")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("orderId");
+                    b.HasKey("timeCreated");
 
                     b.HasIndex("orderCustomeruserId");
 
@@ -120,8 +119,8 @@ namespace P0_KemoAllen.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("UnitPrice")
-                        .HasColumnType("float");
+                    b.Property<decimal>("UnitPrice")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("productId");
 
@@ -130,20 +129,17 @@ namespace P0_KemoAllen.Migrations
 
             modelBuilder.Entity("P0_KemoAllen.Inventory", b =>
                 {
+                    b.HasOne("P0_KemoAllen.Location", "inventoryLocation")
+                        .WithMany()
+                        .HasForeignKey("inventoryLocationlocationGuid");
+
                     b.HasOne("P0_KemoAllen.Product", "inventoryProduct")
                         .WithMany()
                         .HasForeignKey("inventoryProductproductId");
 
+                    b.Navigation("inventoryLocation");
+
                     b.Navigation("inventoryProduct");
-                });
-
-            modelBuilder.Entity("P0_KemoAllen.Location", b =>
-                {
-                    b.HasOne("P0_KemoAllen.Inventory", "locationInventory")
-                        .WithMany()
-                        .HasForeignKey("locationInventoryinventoryId");
-
-                    b.Navigation("locationInventory");
                 });
 
             modelBuilder.Entity("P0_KemoAllen.Order", b =>

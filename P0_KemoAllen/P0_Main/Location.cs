@@ -10,7 +10,7 @@ namespace P0_KemoAllen
         }
         public Location(string name){
             //Store name
-            locationName = name;
+            this.locationName = name;
 
         }
         //Location Id
@@ -32,7 +32,7 @@ namespace P0_KemoAllen
         }
         
         //Inventory of the location -- List
-        public Inventory locationInventory { get; set;} = new Inventory();
+        //public Inventory locationInventory { get; set;} = new Inventory();
         // public Inventory LocationInventory
         // {
         //     get { return locationInventory; }

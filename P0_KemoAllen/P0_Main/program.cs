@@ -15,6 +15,10 @@ namespace P0_KemoAllen
             string logInChoice = "y"; //The program starts by default
             //string [] userName;
             Customer user = new Customer();
+
+            //initialize the list of items in the store if it is empty
+            storeContext.AddListItemsToDB();
+
             do
             {
                 Console.WriteLine("Would you like to Log in? (y/n)");
@@ -33,7 +37,7 @@ namespace P0_KemoAllen
         public static void MainMenu(Customer user) //Manages all of the options for the user in the main menu
         { 
             String menuChoice = "";
-            Guid id = new Guid();
+            String id;
             //Order order;
             //Location location;
             bool cont = true; 
@@ -43,7 +47,7 @@ namespace P0_KemoAllen
                 Console.WriteLine($"Hello {user.FirstName} What would you like to do?");
                 Console.WriteLine("\tThe Menu options are:\n\torder - To make a new order\n\td1 - Display a customer's order history"
                 +"\n\td2 - Display a location's order history\n\tsearch - To lookup a customer\n\td3 - Display an order's content\n\tq - Quit");
-                menuChoice = Console.ReadLine();
+                menuChoice = Console.ReadLine().Trim();
 
                 //user portal
                 switch(menuChoice)
@@ -54,7 +58,7 @@ namespace P0_KemoAllen
                 break;
                 case "d3": //Displays an order's details
                 Console.WriteLine("Please enter the order id.");
-                id = Guid.Parse(Console.ReadLine());
+                id = Console.ReadLine();
                 DisplayOrder(id);
                 break;
                 case "d1"://shows all customer order information history 
@@ -112,29 +116,40 @@ namespace P0_KemoAllen
 
         }//DisplayCustomerHistory
 
-        public static void DisplayOrder(Guid id)
+        public static void DisplayOrder(String stringId)
         {
             bool orderFound = false;
-            Order order = new Order();
+            bool isGuid = false;
+            Guid guidId;
+            //Order order;
 
             List<Order> orders = storeContext.GetOrders();
 
-            foreach(var item in orders)
-            {
-                if(item.orderId == id)
-                {
-                    order = item;
-                    orderFound = true;
-                }
-            }
+            isGuid = Guid.TryParse(stringId, out guidId);
 
-            if(orderFound)
+            if(isGuid)
             {
-                order.DisplayDetails();
+                foreach(var item in orders)
+                {
+                    if(item.orderId == guidId)
+                    {
+                        item.DisplayDetails();
+                        orderFound = true;
+                    }
+                }
+
+                if(orderFound)
+                {
+                    //order.DisplayDetails();
+                }
+                else
+                {
+                    Console.WriteLine("Sorry we couldn't find that order.");
+                }
             }
             else
             {
-                Console.WriteLine("Sorry we couldn't find that order.");
+                Console.WriteLine("Sorry that order id is invalid.");
             }
         }//Display Order
 

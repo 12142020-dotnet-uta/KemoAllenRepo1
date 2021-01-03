@@ -8,7 +8,7 @@ namespace P0_KemoAllen
         public Product(){
 
         }
-        public Product(string name, double price){
+        public Product(string name, decimal unitPrice){
             this.description = name;
             this.unitPrice = unitPrice;
             //this.quantity = quantity;
@@ -18,8 +18,8 @@ namespace P0_KemoAllen
         public Guid productId {get; set;} = Guid.NewGuid();
         
         //Price of 1 item
-        private double unitPrice { get; set;}
-        public double UnitPrice
+        private decimal unitPrice { get; set;}
+        public decimal UnitPrice
         {
             get { return unitPrice; }
             set { unitPrice = value; }

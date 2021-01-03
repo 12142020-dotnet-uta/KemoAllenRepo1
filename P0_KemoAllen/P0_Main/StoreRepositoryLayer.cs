@@ -69,31 +69,45 @@ namespace P0_KemoAllen
         /// </summary>
         public void AddListItemsToDB()
         {
+            string[] productNames = {"Apple", "Water", "Cookies", "Milk", "Cabbage", "Rice"};
+            decimal[] productPrices = {0.29m, 0.49m, 2.99m, 2.49m, 1.39m, 6.99m};
             //use one strings and one object
-            Product apple = new Product("Apple", 0.29);
-            products.Add(apple);
-            Product water = new Product("Water", 0.49);
-            products.Add(water);
-            Product cookie = new Product("Cookies", 2.99);
-            products.Add(cookie);
-            Product milk = new Product("Milk", 2.49);
-            products.Add(milk);
-            Product cabbage = new Product("Cabbage", 1.39);
-            products.Add(cabbage);
-            Product rice = new Product("Rice", 6.99);
-            products.Add(rice);
 
-            DbContext.SaveChanges();
+            if(inventories.Count() == 0)
+            {
+                for(int i = 0; i < productNames.Length; i++)
+                {   
+                    Product p = new Product(productNames[i], productPrices[i]);
+                    products.Add(p);
+                }
+                DbContext.SaveChanges();
+            }
+            // Product apple = new Product("Apple", 0.29);
+            // products.Add(apple);
+            // Product water = new Product("Water", 0.49);
+            // products.Add(water);
+            // Product cookie = new Product("Cookies", 2.99);
+            // products.Add(cookie);
+            // Product milk = new Product("Milk", 2.49);
+            // products.Add(milk);
+            // Product cabbage = new Product("Cabbage", 1.39);
+            // products.Add(cabbage);
+            // Product rice = new Product("Rice", 6.99);
+            // products.Add(rice);
+ 
         }
         /// <summary>
         /// 
         /// </summary>
-        public void LoadItemsToInventory()
+        public void LoadItemsToInventory(Location loc)
         {
-            // foreach (var product in products)
-            // {
-                
-            // }
+            foreach (var product in products)
+            {
+                Inventory inv = new Inventory(product, loc);
+                inventories.Add(inv);
+
+            }
+            DbContext.SaveChanges();
         }
         /// <summary>
         /// Converts name input into a 2 element string array
@@ -189,16 +203,16 @@ namespace P0_KemoAllen
             //Inventory inv = new Inventory();
 
             Console.WriteLine("Which location are you ordering from? " +
-            "If the name you input is not here a new locaiton wil be added.");
+            "If the name you input is not here a new location wil be added.");
             DisplayAvailableLocations(); 
 
             locName = Console.ReadLine();
 
-            foreach(var item in locations)
+            foreach(var location in locations)
             {
-                if(item.LocationName.Equals(locName))
+                if(location.LocationName.Equals(locName))
                 {
-                    loc = item;
+                    loc = location;
                     locationFound = true;
                     break;
                 }
@@ -209,6 +223,8 @@ namespace P0_KemoAllen
                 loc.LocationName = locName;
                 locations.Add(loc);
                 DbContext.SaveChanges();
+                LoadItemsToInventory(loc);
+                
             }
             
             //Console.WriteLine(loc.LocationInventory.OrderProduct(1).ToString());
@@ -220,28 +236,32 @@ namespace P0_KemoAllen
         /// Afterwards asks for an item and a quantity of that item.
         /// </summary>
         /// <param name="user"></param>
-        public Guid EditOrder(Customer user)
+        public String EditOrder(Customer user)
         { 
-            Order order = new Order();
+            //Order order = new Order();
+            Guid id = Guid.NewGuid();
             int numOfItem;
             string consoleInput;
             //Product prod, orderProd;
             Inventory inv;
+            Location loc;
             bool quantityAvailable;
 
             //Add the customer to the order
-            order.orderCustomer = user;
+            //order.orderCustomer = user;
             //Get the location for the order
-            order.orderLocation = SelectLocation();
+            //order.orderLocation = SelectLocation();
+            loc = SelectLocation();
             //Get the location's inventory
             //inv = order.orderLocation.locationInventory;
 
             do
             {
+                Order order = new Order(id, user, loc);
                 //Get item name and check if it is valid
                 Console.WriteLine("What would you like to add to the order?");
                 DisplayAvailableProducts();
-                inv = FindProduct(order.orderLocation);
+                inv = FindProduct(loc);
             
                 //Get quantity of item and check if it is valid
                 Console.WriteLine("How many would you like to order?");
@@ -262,7 +282,7 @@ namespace P0_KemoAllen
             //Display current receipt
 
             //DisplayOrder(order.orderId);
-            return order.orderId;
+            return id.ToString();
         }//EditOrder
 
         /// <summary>
@@ -304,9 +324,9 @@ namespace P0_KemoAllen
                 //Get user input
                 prodName = Console.ReadLine();
                 //Get the matching product from the inventory
-                inv = GetInvetoryItem(prodName, loc);
+                inv = GetInventoryItem(prodName, loc);
 
-                if(inv != null)
+                if(inv != null && inv.inventoryProduct != null)
                 {
                     itemExists = true;
                     Console.WriteLine($"There are {inv.inventoryQuantity} {inv.inventoryProduct.Description}'s in stock.");
@@ -375,7 +395,7 @@ namespace P0_KemoAllen
             Console.WriteLine($"Success! The quantity of {inv.inventoryProduct.Description} is now {inv.inventoryQuantity}.");
             //Copy information into the order product
             orderP.orderProduct = inv.inventoryProduct;
-            orderP.orderQuantity = inv.inventoryQuantity;
+            orderP.orderQuantity = numOfItem;
             //Add to the list of orders
             orders.Add(orderP);
             //Update DB
@@ -387,12 +407,12 @@ namespace P0_KemoAllen
         /// <param name="itemName"></param>
         /// <param name="loc"></param>
         /// <returns>The inventory product that matches the two inputs.</returns>
-        public Inventory GetInvetoryItem(String itemName, Location loc)
+        public Inventory GetInventoryItem(String itemName, Location loc)
         {
             Inventory inv = new Inventory();
             foreach(var inventory in inventories)
             {
-                if(loc.locationInventory == inventory)
+                if(inventory.inventoryLocation == loc)
                 {
                     if(inventory.inventoryProduct.Description == itemName)
                     {
@@ -410,7 +430,7 @@ namespace P0_KemoAllen
         {
             foreach(var location in locations)
             {
-                location.ToString();
+                Console.WriteLine("\t" + location.ToString());
             }
         }
         /// <summary>
@@ -420,7 +440,7 @@ namespace P0_KemoAllen
         {
             foreach(var product in products)
             {
-                product.ToString();
+                Console.WriteLine("\t" + product.ToString());
             }
         }
         /// <summary>
@@ -430,7 +450,7 @@ namespace P0_KemoAllen
         {
             foreach(var customer in customers)
             {
-                customer.ToString();
+                Console.WriteLine("\t" + customer.ToString());
             }
         }
         
