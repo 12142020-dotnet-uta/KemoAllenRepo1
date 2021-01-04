@@ -9,6 +9,8 @@ namespace P0_KemoAllen
         string firstName();
        
         string lastName();
+
+        string userName();
         
     }
 }

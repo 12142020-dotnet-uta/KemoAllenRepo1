@@ -13,7 +13,7 @@ namespace P0_KemoAllen
         DbSet<Customer> customers; //Database set of customers
         DbSet<Order> orders; //Database set of orders
         DbSet<Location> locations; //Database set of locations
-        DbSet<Inventory> inventory;
+        DbSet<Inventory> inventories;
 
         public StoreRepositoryLayer()
         {
@@ -29,7 +29,7 @@ namespace P0_KemoAllen
             customers = DbContext.customers;
             orders = DbContext.orders;
             locations = DbContext.locations;
-            inventory = DbContext.inventory;
+            inventories = DbContext.inventories;
             products = DbContext.products;
         }
         /// <summary>
@@ -56,27 +56,75 @@ namespace P0_KemoAllen
         {
             return locations.ToList();
         }
-        // public void AddListItemsToDB()
-        // {
-        //     foreach(var item in list)
-        //     {
+        /// <summary>
+        /// Returns matching all objects in List<Product>
+        /// </summary>
+        /// <returns></returns>
+        public List<Product> GetProducts()
+        {
+            return products.ToList();
+        }
+        /// <summary>
+        /// Loads an initial list of items to DB
+        /// </summary>
+        public void AddListItemsToDB()
+        {
+            string[] productNames = {"Apple", "Water", "Cookies", "Milk", "Cabbage", "Rice"};
+            decimal[] productPrices = {0.29m, 0.49m, 2.99m, 2.49m, 1.39m, 6.99m};
+            //use one strings and one object
 
-        //     }
-        // }
+            if(inventories.Count() == 0)
+            {
+                for(int i = 0; i < productNames.Length; i++)
+                {   
+                    Product p = new Product(productNames[i], productPrices[i]);
+                    products.Add(p);
+                }
+                DbContext.SaveChanges();
+            }
+            // Product apple = new Product("Apple", 0.29);
+            // products.Add(apple);
+            // Product water = new Product("Water", 0.49);
+            // products.Add(water);
+            // Product cookie = new Product("Cookies", 2.99);
+            // products.Add(cookie);
+            // Product milk = new Product("Milk", 2.49);
+            // products.Add(milk);
+            // Product cabbage = new Product("Cabbage", 1.39);
+            // products.Add(cabbage);
+            // Product rice = new Product("Rice", 6.99);
+            // products.Add(rice);
+ 
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public void LoadItemsToInventory(Location loc)
+        {
+            foreach (var product in products)
+            {
+                Inventory inv = new Inventory(product, loc);
+                inventories.Add(inv);
+
+            }
+            DbContext.SaveChanges();
+        }
         /// <summary>
         /// Converts name input into a 2 element string array
         /// </summary>
         /// <returns></returns>
-        public string[] RetrieveUser() 
+        public string[] GetFirstAndLastName() 
         {
-            string[] userName;
+            string[] names;
             bool nameValid = false;
+
+            Console.WriteLine("Please enter your first and last name.");
 
             do
             {
-                userName = Console.ReadLine().Trim().Split(' ');
+                names = Console.ReadLine().Trim().Split(' ');
 
-                if(userName.Length != 2)      
+                if(names.Length != 2)      
                 {
                     Console.WriteLine("Sorry the name that you entered was invalid. Please try again.");
                     nameValid = false;
@@ -86,23 +134,56 @@ namespace P0_KemoAllen
 
             }while(!nameValid);
 
-            return userName;
-        }//LogIn
+            return names;
+        }//GetFirstAndLastName
         /// <summary>
-        /// Takes in a 2 element array containing a user's first and last names.
-        /// Then either adds a new customer or gets an old customer from the list.
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public string CheckUserName()
+        {
+            string userName;
+            bool valid = false;
+
+            do
+            {
+                userName = Console.ReadLine().Trim();
+                //If userName has a value return true
+                if(!userName.Equals(""))
+                {
+                    valid = true;
+                }
+                else
+                {
+                    Console.WriteLine("Sorry the name you entered wasn't valid try again.");
+                }
+            }while(!valid);
+
+            return userName;
+
+        }
+        /// <summary>
+        /// Asks for the user to enter their user name. If that user is already registed return that user.
+        /// If the user is not registered then add the new user and ask for their credentials.
         /// </summary>
         /// <param name="userName"></param>
         /// <returns> Customer Object</returns>
-        public Customer LogIn(string [] userName) 
+        public Customer LogIn() 
         {
+            string userName;
+            string [] actualName;
             Customer user = new Customer();
+
+            Console.WriteLine("Please enter your user name.");
+            userName = CheckUserName();
+
             //Console.WriteLine(userName[0] + userName[1]);
-            user = customers.Where(x => x.FirstName == userName[0] && x.LastName == userName[1]).FirstOrDefault();
+            user = customers.Where(x => x.UserName == userName).FirstOrDefault();
 
             if(user == null)
             {
-                user = new Customer(userName[0], userName[1]);
+                actualName = GetFirstAndLastName();
+                user = new Customer(actualName[0], actualName[1], userName);
                 customers.Add(user);
                 DbContext.SaveChanges();
             }
@@ -114,20 +195,24 @@ namespace P0_KemoAllen
         ///  or returns a matching loaction.
         /// </summary>
         /// <returns>Location Object</returns>
-        public Location SelectLocation(){
+        public Location SelectLocation()
+        {
             string locName;
             bool locationFound = false;
             Location loc = new Location();
             //Inventory inv = new Inventory();
 
-            Console.WriteLine("Which location are you ordering from?");
+            Console.WriteLine("Which location are you ordering from? " +
+            "If the name you input is not here a new location wil be added.");
+            DisplayAvailableLocations(); 
+
             locName = Console.ReadLine();
 
-            foreach(var item in locations)
+            foreach(var location in locations)
             {
-                if(item.locationName.Equals(locName))
+                if(location.LocationName.Equals(locName))
                 {
-                    loc = item;
+                    loc = location;
                     locationFound = true;
                     break;
                 }
@@ -135,11 +220,11 @@ namespace P0_KemoAllen
 
             if(!locationFound) 
             {           
-                loc.locationName = locName;
-                loc.locationInventory = new Inventory();
-                loc.locationInventory.LoadProducts();
+                loc.LocationName = locName;
                 locations.Add(loc);
                 DbContext.SaveChanges();
+                LoadItemsToInventory(loc);
+                
             }
             
             //Console.WriteLine(loc.LocationInventory.OrderProduct(1).ToString());
@@ -151,71 +236,223 @@ namespace P0_KemoAllen
         /// Afterwards asks for an item and a quantity of that item.
         /// </summary>
         /// <param name="user"></param>
-        public Guid EditOrder(Customer user){ 
-            Order order = new Order();
-            int itemNumber, numOfItem;
-            bool validNumber = false;
+        public String EditOrder(Customer user)
+        { 
+            //Order order = new Order();
+            Guid id = Guid.NewGuid();
+            int numOfItem;
             string consoleInput;
-            //Location loc = SelectLocation();
-            //Inventory inv = new Inventory();
-            Product prod;
-            //Guid guid;
+            //Product prod, orderProd;
+            Inventory inv;
+            Location loc;
+            bool quantityAvailable;
 
             //Add the customer to the order
-            order.orderCustomer = user;
+            //order.orderCustomer = user;
             //Get the location for the order
-            order.orderLocation = SelectLocation();
+            //order.orderLocation = SelectLocation();
+            loc = SelectLocation();
+            //Get the location's inventory
+            //inv = order.orderLocation.locationInventory;
 
             do
             {
-                //Get item number and check if it is valid
-                do
-                {
-                    Console.WriteLine("What would you like to add to the order?");
-                    consoleInput = Console.ReadLine();
-                    validNumber = int.TryParse(consoleInput, out itemNumber);
-                    if(!validNumber)
-                        {   
-                        Console.WriteLine("The number that you entered was invalid.");
-                        }
-
-                }while(!validNumber); 
+                Order order = new Order(id, user, loc);
+                //Get item name and check if it is valid
+                Console.WriteLine("What would you like to add to the order?");
+                DisplayAvailableProducts();
+                inv = FindProduct(loc);
+            
                 //Get quantity of item and check if it is valid
-                validNumber = false;
-                do
-                {
-
-                    Console.WriteLine("How many would you like to order?");
-                    consoleInput = Console.ReadLine();
-                    validNumber = int.TryParse(consoleInput, out numOfItem);
-                    if(!validNumber)
-                        {   
-                        Console.WriteLine("The number that you entered was invalid.");
-                        }
-                }while(!validNumber);
-                
+                Console.WriteLine("How many would you like to order?");
+                numOfItem = ParseCheckInt();
                 //Get the item requested
-                prod = order.orderLocation.locationInventory.OrderProduct(itemNumber, numOfItem);
-                //Add product to list
-                if(prod.quantity > 0)
+                quantityAvailable = CheckIfQuantityAvailable(inv, numOfItem);
+                 //Add to the order and add order to DB
+                if(quantityAvailable)
                 {
-                products.Add(prod);
-                DbContext.SaveChanges();
-                //Add to the order
-                order.AddToOrder(prod);
-                DbContext.SaveChanges();
+                    TakeFromInventoryAddToOrder(inv, numOfItem, order);
                 }
-                Console.WriteLine("Would you like to continue your order?");
+
+                Console.WriteLine("Would you like to continue your order? (y/n)");
                 consoleInput = Console.ReadLine(); 
 
             }while(consoleInput != "no" && consoleInput != "n");
-            //Console.WriteLine(prod.ToString());
-            orders.Add(order);
-            DbContext.SaveChanges();
+            
             //Display current receipt
+
             //DisplayOrder(order.orderId);
-            return order.orderId;
+            return id.ToString();
         }//EditOrder
+
+        /// <summary>
+        /// This method takes a user input and tries to parse it to an int.
+        /// If the int was invalid the user will be prompted to enter a value again.
+        /// </summary>
+        /// <returns></returns>
+        public int ParseCheckInt()
+        {
+            bool validNumber = false;
+            String consoleInput;
+            int output;
+
+            do
+            {
+                consoleInput = Console.ReadLine();
+                validNumber = int.TryParse(consoleInput, out output);
+                    if(!validNumber)
+                        {   
+                        Console.WriteLine("The number that you entered was invalid. Try again.");
+                        }
+            } while (!validNumber);
+
+            return output;
+        }//ParseCheckInt
+        /// <summary>
+        /// Searches for a product based on the given string.
+        /// </summary>
+        /// <returns>A copy of the desired item.</returns>
+        public Inventory FindProduct(Location loc)
+        {
+            Inventory inv;
+            bool itemExists = false;
+            string prodName;
+            
+            //Check to see if the there is an item for the string passed
+            do
+            {
+                //Get user input
+                prodName = Console.ReadLine();
+                //Get the matching product from the inventory
+                inv = GetInventoryItem(prodName, loc);
+
+                if(inv != null && inv.inventoryProduct != null)
+                {
+                    itemExists = true;
+                    Console.WriteLine($"There are {inv.inventoryQuantity} {inv.inventoryProduct.Description}'s in stock.");
+                }
+                
+                if(!itemExists)
+                {
+                    Console.WriteLine("No associated item for " + prodName + " was found. Please try again.");
+                }
+            } while (!itemExists);
+
+            return inv;
+        }
+        /// <summary>
+        /// Checks if it is possible to take the requested quantity away from the inventory.
+        /// Returns false if the input is too great for the current quantity.
+        /// </summary>
+        /// <param name="p"></param>
+        /// <param name="numOfItem"></param>
+        public bool CheckIfQuantityAvailable(Inventory inv, int numOfItem)
+        {
+            bool quantityAvailable = false;
+            Product orderP = new Product();
+
+            //Check if the Product requested exists
+            if(inv != null)
+            {
+                //Check if the quantity is available
+                if(inv.inventoryQuantity > 0)
+                {
+                    if(numOfItem > 10)
+                    {
+                        Console.WriteLine("Sorry. You asked for " + numOfItem + $" {inv.inventoryProduct.Description}(s), but the limit is 10.");
+                        
+                    }
+                    else if(numOfItem > 0)
+                    {
+                        if(inv.inventoryQuantity < numOfItem)
+                        {
+                            Console.WriteLine("Sorry. You asked for " + numOfItem + $" {inv.inventoryProduct.Description}(s),"
+                             + $" but there is only {inv.inventoryQuantity} left.");
+                        }
+                        else
+                        {
+                            quantityAvailable = true;
+
+                        }
+                    }
+                }
+                
+            }
+                        
+            return quantityAvailable;
+        }
+        /// <summary>
+        /// Decrements the quantity from the inventory and adds the amount take to the order
+        /// and adds the Product to the order.
+        /// </summary>
+        /// <param name="inv"></param>
+        /// <param name="numOfItem"></param>
+        /// <param name="orderP"></param>
+        public void TakeFromInventoryAddToOrder(Inventory inv, int numOfItem, Order orderP)
+        {
+            //Decrement from the main product
+            inv.inventoryQuantity -= numOfItem;
+            Console.WriteLine($"Success! The quantity of {inv.inventoryProduct.Description} is now {inv.inventoryQuantity}.");
+            //Copy information into the order product
+            orderP.orderProduct = inv.inventoryProduct;
+            orderP.orderQuantity = numOfItem;
+            //Add to the list of orders
+            orders.Add(orderP);
+            //Update DB
+            DbContext.SaveChanges();
+        }
+        /// <summary>
+        /// Takes in the location and name of the desired item.
+        /// </summary>
+        /// <param name="itemName"></param>
+        /// <param name="loc"></param>
+        /// <returns>The inventory product that matches the two inputs.</returns>
+        public Inventory GetInventoryItem(String itemName, Location loc)
+        {
+            Inventory inv = new Inventory();
+            foreach(var inventory in inventories)
+            {
+                if(inventory.inventoryLocation == loc)
+                {
+                    if(inventory.inventoryProduct.Description == itemName)
+                    {
+                        inv = inventory;
+                        break;
+                    }
+                }
+            }
+            return inv;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public void DisplayAvailableLocations()
+        {
+            foreach(var location in locations)
+            {
+                Console.WriteLine("\t" + location.ToString());
+            }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public void DisplayAvailableProducts()
+        {
+            foreach(var product in products)
+            {
+                Console.WriteLine("\t" + product.ToString());
+            }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public void DisplayAvailableCustomers()
+        {
+            foreach(var customer in customers)
+            {
+                Console.WriteLine("\t" + customer.ToString());
+            }
+        }
         
     }
 }

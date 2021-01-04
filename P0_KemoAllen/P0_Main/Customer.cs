@@ -7,24 +7,20 @@ namespace P0_KemoAllen
     {
         public Customer()
         {
-            userId = Guid.NewGuid();
+  
         }
-        public Customer(string fName = "null", string lName = "null")
+        public Customer(string fName = "null", string lName = "null", string uName = "null")
         {
-            firstName = fName;
-            lastName = lName;
-            userId = Guid.NewGuid();
+            this.firstName = fName;
+            this.lastName = lName;
+            this.userName = uName;
 
         }
 
         //User's id number
         [Key]
-        public Guid userId { get; set;}
-        // public Guid UserId
-        // {
-        //     get { return userId; }
-        //     set { userId = value; }
-        // }
+        public Guid userId { get; set;} = Guid.NewGuid();
+       
         //User's first name
         private string firstName;
         public string FirstName
@@ -38,6 +34,18 @@ namespace P0_KemoAllen
         {
             get { return lastName; }
             set { lastName = value; }
+        }
+
+        private string userName;
+        public string UserName
+        {
+            get { return userName; }
+            set { userName = value; }
+        }
+
+        public override string ToString()
+        {
+            return userName;
         }
         
     }

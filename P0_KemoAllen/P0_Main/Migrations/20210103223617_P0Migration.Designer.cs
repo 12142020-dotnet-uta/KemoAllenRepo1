@@ -10,8 +10,8 @@ using P0_KemoAllen;
 namespace P0_KemoAllen.Migrations
 {
     [DbContext(typeof(Store_DbContext))]
-    [Migration("20201229223707_products")]
-    partial class products
+    [Migration("20210103223617_P0Migration")]
+    partial class P0Migration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -33,6 +33,9 @@ namespace P0_KemoAllen.Migrations
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("userId");
 
                     b.ToTable("customers");
@@ -44,9 +47,22 @@ namespace P0_KemoAllen.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("inventoryLocationlocationGuid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("inventoryProductproductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("inventoryQuantity")
+                        .HasColumnType("int");
+
                     b.HasKey("inventoryId");
 
-                    b.ToTable("inventory");
+                    b.HasIndex("inventoryLocationlocationGuid");
+
+                    b.HasIndex("inventoryProductproductId");
+
+                    b.ToTable("inventories");
                 });
 
             modelBuilder.Entity("P0_KemoAllen.Location", b =>
@@ -55,39 +71,41 @@ namespace P0_KemoAllen.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("locationInventoryinventoryId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("locationName")
+                    b.Property<string>("LocationName")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("locationGuid");
-
-                    b.HasIndex("locationInventoryinventoryId");
 
                     b.ToTable("locations");
                 });
 
             modelBuilder.Entity("P0_KemoAllen.Order", b =>
                 {
-                    b.Property<Guid>("orderId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<DateTime>("timeCreated")
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid?>("orderCustomeruserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("orderId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("orderLocationlocationGuid")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("timeCreated")
-                        .HasColumnType("datetime2");
+                    b.Property<Guid?>("orderProductproductId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("orderId");
+                    b.Property<int>("orderQuantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("timeCreated");
 
                     b.HasIndex("orderCustomeruserId");
 
                     b.HasIndex("orderLocationlocationGuid");
+
+                    b.HasIndex("orderProductproductId");
 
                     b.ToTable("orders");
                 });
@@ -98,27 +116,30 @@ namespace P0_KemoAllen.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("description")
+                    b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("price")
-                        .HasColumnType("float");
-
-                    b.Property<int>("quantity")
-                        .HasColumnType("int");
+                    b.Property<decimal>("UnitPrice")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("productId");
 
                     b.ToTable("products");
                 });
 
-            modelBuilder.Entity("P0_KemoAllen.Location", b =>
+            modelBuilder.Entity("P0_KemoAllen.Inventory", b =>
                 {
-                    b.HasOne("P0_KemoAllen.Inventory", "locationInventory")
+                    b.HasOne("P0_KemoAllen.Location", "inventoryLocation")
                         .WithMany()
-                        .HasForeignKey("locationInventoryinventoryId");
+                        .HasForeignKey("inventoryLocationlocationGuid");
 
-                    b.Navigation("locationInventory");
+                    b.HasOne("P0_KemoAllen.Product", "inventoryProduct")
+                        .WithMany()
+                        .HasForeignKey("inventoryProductproductId");
+
+                    b.Navigation("inventoryLocation");
+
+                    b.Navigation("inventoryProduct");
                 });
 
             modelBuilder.Entity("P0_KemoAllen.Order", b =>
@@ -131,9 +152,15 @@ namespace P0_KemoAllen.Migrations
                         .WithMany()
                         .HasForeignKey("orderLocationlocationGuid");
 
+                    b.HasOne("P0_KemoAllen.Product", "orderProduct")
+                        .WithMany()
+                        .HasForeignKey("orderProductproductId");
+
                     b.Navigation("orderCustomer");
 
                     b.Navigation("orderLocation");
+
+                    b.Navigation("orderProduct");
                 });
 #pragma warning restore 612, 618
         }
