@@ -9,9 +9,15 @@ namespace P0_KemoAllen
 
         }
 
+        public Order(Guid id, Customer user, Location location)
+        {
+            this.orderId = id;
+            this.orderCustomer = user;
+            this.orderLocation = location;
+        }
+
         //Order id
-        [Key]
-        public Guid orderId { get; set;} = Guid.NewGuid();
+        public Guid orderId { get; set;} 
         // public Guid OrderId
         // {
         //     get { return orderId; }
@@ -19,12 +25,16 @@ namespace P0_KemoAllen
         // }
 
         //List containing the products in an order
-        public List<Product> orderProducts = new List<Product>();
+        // public List<Product> orderProducts = new List<Product>();
 
-        public void AddToOrder(Product p)
-        {
-            orderProducts.Add(p);
-        }
+        // public void AddToOrder(Product p)
+        // {
+        //     orderProducts.Add(p);
+        // }
+
+        public Product orderProduct { get; set; } 
+
+        public int orderQuantity { get; set; }
         
         //The order's store location
         public Location orderLocation { get; set;}
@@ -42,24 +52,22 @@ namespace P0_KemoAllen
         // }
         
         //Order time
+        [Key]
         public DateTime timeCreated { get; set;} = DateTime.Now;
         // public DateTime GetTimeCreated(){
         //     return timeCreated;
         // }
 
-        //Calculate Price
-        public void CostCalc() //Do in DB?
-        {
-            
-        }
-
         public void DisplayDetails()
-        {
-            foreach(var item in orderProducts)
-            {
-            Console.WriteLine($"Order Id: {orderId} \tCustomer Id: {orderCustomer.userId} \tLocation: {orderLocation.locationName} \t "
-            + $"Product: {item.description} \tProduct Quantity: {item.quantity} \t Price: {item.price} \t Time: {timeCreated}");
-            }
+        { 
+            Console.WriteLine($"Order Id: {orderId} \tUser Name: {orderCustomer.UserName} \tLocation: {orderLocation.LocationName}"
+            + $"\tProduct: {orderProduct.Description} \tProduct Quantity: {orderQuantity} \tPrice: {orderProduct.UnitPrice} \tTime: {timeCreated}");
+            //Console.WriteLine(orderCustomer.UserName);
+            // Console.WriteLine(orderLocation.LocationName); //issue
+            //Console.WriteLine(orderProduct.Description); //issue
+            // Console.WriteLine(orderQuantity);
+            // Console.WriteLine(orderProduct.UnitPrice);
+            
         }
         
 
