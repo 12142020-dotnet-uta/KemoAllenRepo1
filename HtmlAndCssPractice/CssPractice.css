@@ -1,0 +1,9 @@
+.csstalk{
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+div, li{
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif !important; 
+}
+*{
+    background-color: lightblue
+}
