@@ -45,7 +45,7 @@ namespace P0_KemoAllen
 
         public override string ToString()
         {
-            return userName;
+            return firstName;
         }
         
     }

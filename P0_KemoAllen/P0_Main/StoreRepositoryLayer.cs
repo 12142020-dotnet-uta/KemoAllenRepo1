@@ -65,7 +65,7 @@ namespace P0_KemoAllen
             return products.ToList();
         }
         /// <summary>
-        /// Loads an initial list of items to DB
+        /// Loads an initial list of items to DB if the products list is empty.
         /// </summary>
         public void AddListItemsToDB()
         {
@@ -82,22 +82,10 @@ namespace P0_KemoAllen
                 }
                 DbContext.SaveChanges();
             }
-            // Product apple = new Product("Apple", 0.29);
-            // products.Add(apple);
-            // Product water = new Product("Water", 0.49);
-            // products.Add(water);
-            // Product cookie = new Product("Cookies", 2.99);
-            // products.Add(cookie);
-            // Product milk = new Product("Milk", 2.49);
-            // products.Add(milk);
-            // Product cabbage = new Product("Cabbage", 1.39);
-            // products.Add(cabbage);
-            // Product rice = new Product("Rice", 6.99);
-            // products.Add(rice);
  
         }
         /// <summary>
-        /// 
+        /// Adds items from the products list to a new inventory based on the location.
         /// </summary>
         public void LoadItemsToInventory(Location loc)
         {
@@ -110,9 +98,10 @@ namespace P0_KemoAllen
             DbContext.SaveChanges();
         }
         /// <summary>
-        /// Converts name input into a 2 element string array
+        /// Gets the user's input for first and last name, and returns them in a
+        ///  two element array.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Two element string array</returns>
         public string[] GetFirstAndLastName() 
         {
             string[] names;
@@ -137,9 +126,10 @@ namespace P0_KemoAllen
             return names;
         }//GetFirstAndLastName
         /// <summary>
-        /// 
+        /// Checks if the user enters a value for user name. If not the program
+        ///  will ask for re entry until a valid value is entered.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A non-empty string</returns>
         public string CheckUserName()
         {
             string userName;
@@ -236,6 +226,7 @@ namespace P0_KemoAllen
         /// Afterwards asks for an item and a quantity of that item.
         /// </summary>
         /// <param name="user"></param>
+        /// <returns>The order id as a string</returns>
         public String EditOrder(Customer user)
         { 
             //Order order = new Order();
@@ -289,7 +280,7 @@ namespace P0_KemoAllen
         /// This method takes a user input and tries to parse it to an int.
         /// If the int was invalid the user will be prompted to enter a value again.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A valid int value</returns>
         public int ParseCheckInt()
         {
             bool validNumber = false;
@@ -309,9 +300,9 @@ namespace P0_KemoAllen
             return output;
         }//ParseCheckInt
         /// <summary>
-        /// Searches for a product based on the given string.
+        /// Searches for a product based on the given location.
         /// </summary>
-        /// <returns>A copy of the desired item.</returns>
+        /// <returns>A copy of the item from inventory.</returns>
         public Inventory FindProduct(Location loc)
         {
             Inventory inv;
@@ -342,10 +333,11 @@ namespace P0_KemoAllen
         }
         /// <summary>
         /// Checks if it is possible to take the requested quantity away from the inventory.
-        /// Returns false if the input is too great for the current quantity.
+        /// Returns false if the input is too great for the current quantity, or too large for the order.
         /// </summary>
-        /// <param name="p"></param>
+        /// <param name="inv"></param>
         /// <param name="numOfItem"></param>
+        /// <returns>Validation if numOfItem is too great or not.</returns>
         public bool CheckIfQuantityAvailable(Inventory inv, int numOfItem)
         {
             bool quantityAvailable = false;
@@ -402,7 +394,8 @@ namespace P0_KemoAllen
             DbContext.SaveChanges();
         }
         /// <summary>
-        /// Takes in the location and name of the desired item.
+        /// Takes in the location and name of the desired item. Then fetches
+        ///  the matching item from the inventory.
         /// </summary>
         /// <param name="itemName"></param>
         /// <param name="loc"></param>
@@ -424,7 +417,7 @@ namespace P0_KemoAllen
             return inv;
         }
         /// <summary>
-        /// 
+        /// Displays each location by name.
         /// </summary>
         public void DisplayAvailableLocations()
         {
@@ -434,7 +427,7 @@ namespace P0_KemoAllen
             }
         }
         /// <summary>
-        /// 
+        /// Displays each product by description.
         /// </summary>
         public void DisplayAvailableProducts()
         {
@@ -444,7 +437,7 @@ namespace P0_KemoAllen
             }
         }
         /// <summary>
-        /// 
+        /// Displays each customer by firstName
         /// </summary>
         public void DisplayAvailableCustomers()
         {
