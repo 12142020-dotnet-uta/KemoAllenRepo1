@@ -175,10 +175,63 @@ namespace P0_KemoAllen
                 actualName = GetFirstAndLastName();
                 user = new Customer(actualName[0], actualName[1], userName);
                 customers.Add(user);
+                OptIntoRecommendations(user);
                 DbContext.SaveChanges();
             }
 
             return user;
+        }
+        /// <summary>
+        /// Changes a user opt in for recommendation status.
+        /// </summary>
+        /// <param name="user"></param>
+        public void OptIntoRecommendations(Customer user)
+        {
+            String choice = "";
+            Console.WriteLine("Would you like to be opted in for recommended products? (y/n)");
+            choice = Console.ReadLine();
+
+            if(choice.Equals("y") || choice.Equals("Y"))
+            {
+                user.OptInForRecommendation(true);
+                Console.WriteLine("Thanks for opting in! You will see recommendations after your first complete order.");
+            }
+            else
+            {
+                Console.WriteLine("No problem.");
+            }
+
+        }
+        /// <summary>
+        /// If the user has opted for recommendations the product that they previously
+        ///  purchased the most of will be displayed.
+        /// </summary>
+        /// <param name="user"></param>
+        public void DisplayRecommendation(Customer user)
+        {
+            int previousQuantity = 0;
+            String recommendedProduct = "";
+
+            if(user.getRecommendStatus())
+            {
+                foreach(var order in orders)
+                {
+                    if(order.orderCustomer == user)
+                    {
+                        if(previousQuantity < order.orderQuantity)
+                        {
+                            recommendedProduct = order.orderProduct.Description;
+                            previousQuantity = order.orderQuantity;
+                        }
+                    }
+                    
+                }
+
+                if(!recommendedProduct.Equals(""))
+                {
+                    Console.WriteLine("We suggest this item: " + recommendedProduct);
+                }
+            }
         }
         /// <summary>
         /// First asks for a locations name. Then either creates a new location
@@ -388,6 +441,7 @@ namespace P0_KemoAllen
             //Copy information into the order product
             orderP.orderProduct = inv.inventoryProduct;
             orderP.orderQuantity = numOfItem;
+            orderP.CalculatePrice();
             //Add to the list of orders
             orders.Add(orderP);
             //Update DB
@@ -445,6 +499,23 @@ namespace P0_KemoAllen
             {
                 Console.WriteLine("\t" + customer.ToString());
             }
+        }
+        /// <summary>
+        /// Searches for orders with a matching GUid id then totals their prices.
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns>Total price of an order</returns>
+        public decimal GetTotalPrice(Guid orderId)
+        {
+            decimal total = 0;
+            foreach(var item in orders)
+            {
+                if(item.orderId == orderId)
+                {
+                    total+= item.getPrice();
+                }
+            }
+            return total;
         }
         
     }

@@ -53,6 +53,7 @@ namespace P0_KemoAllen
                 switch(menuChoice)
                 {
                 case "order":
+                storeContext.DisplayRecommendation(user);
                 id = storeContext.EditOrder(user); //adds or remove items from an order list
                 DisplayOrder(id);
                 break;

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace P0_KemoAllen
 {
-    public class Customer 
+    public class Customer : IRecommend
     {
         public Customer()
         {
@@ -41,6 +41,17 @@ namespace P0_KemoAllen
         {
             get { return userName; }
             set { userName = value; }
+        }
+
+        private bool recommendProduct = false;
+        public bool getRecommendStatus()
+        {
+            return recommendProduct;
+        }
+
+        public void OptInForRecommendation(bool changeStatus)
+        {
+            this.recommendProduct = changeStatus;
         }
 
         public override string ToString()
