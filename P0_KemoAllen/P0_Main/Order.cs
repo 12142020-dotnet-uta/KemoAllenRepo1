@@ -24,14 +24,6 @@ namespace P0_KemoAllen
         //     set { orderId = value; }
         // }
 
-        //List containing the products in an order
-        // public List<Product> orderProducts = new List<Product>();
-
-        // public void AddToOrder(Product p)
-        // {
-        //     orderProducts.Add(p);
-        // }
-
         public Product orderProduct { get; set; } 
 
         public int orderQuantity { get; set; }
@@ -58,35 +50,30 @@ namespace P0_KemoAllen
         //     return timeCreated;
         // }
 
+        //Price
+        private decimal price;
+
+        public decimal getPrice()
+        {
+            return price;
+        }
+        public void CalculatePrice()
+        {
+            price = (decimal)orderQuantity * orderProduct.UnitPrice;
+        }
+
         public void DisplayDetails()
         { 
             Console.WriteLine($"Order Id: {orderId} \tUser Name: {orderCustomer.UserName} \tLocation: {orderLocation.LocationName}"
-            + $"\tProduct: {orderProduct.Description} \tProduct Quantity: {orderQuantity} \tPrice: {orderProduct.UnitPrice} \tTime: {timeCreated}");
-            //Console.WriteLine(orderCustomer.UserName);
-            // Console.WriteLine(orderLocation.LocationName); //issue
-            //Console.WriteLine(orderProduct.Description); //issue
-            // Console.WriteLine(orderQuantity);
-            // Console.WriteLine(orderProduct.UnitPrice);
+            + $"\tProduct: {orderProduct.Description} \tProduct Quantity: {orderQuantity} \tPrice: {price} \tTime: {timeCreated}");
             
         }
         
-
         public override string ToString()
         {
             return "Order Id: " + "Customer Id: " + "Location: " + "Product: " + "Product Quantity: " + "Cost: " + "Time of Order: ";
            
-        }
-
-
-        //Products in the order --List
-        // private Product orderProducts;
-        // public Product OrderProducts
-        // {
-        //     get { return orderProducts; }
-        //     set { orderProducts = value; }
-        // }
-        
-        
+        } 
         
     }
 }
