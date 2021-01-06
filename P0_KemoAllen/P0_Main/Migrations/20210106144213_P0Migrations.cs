@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace P0_KemoAllen.Migrations
 {
-    public partial class P0Migration : Migration
+    public partial class P0Migrations : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

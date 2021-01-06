@@ -65,7 +65,7 @@ namespace P0_KemoAllen
         public void DisplayDetails()
         { 
             Console.WriteLine($"Order Id: {orderId} \tUser Name: {orderCustomer.UserName} \tLocation: {orderLocation.LocationName}"
-            + $"\tProduct: {orderProduct.Description} \tProduct Quantity: {orderQuantity} \tPrice: {price} \tTime: {timeCreated}");
+            + $"\tProduct: {orderProduct.Description} \tProduct Quantity: {orderQuantity} \tPrice Total: {price} \tTime: {timeCreated}");
             
         }
         

@@ -10,8 +10,8 @@ using P0_KemoAllen;
 namespace P0_KemoAllen.Migrations
 {
     [DbContext(typeof(Store_DbContext))]
-    [Migration("20210103223617_P0Migration")]
-    partial class P0Migration
+    [Migration("20210106144213_P0Migrations")]
+    partial class P0Migrations
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
