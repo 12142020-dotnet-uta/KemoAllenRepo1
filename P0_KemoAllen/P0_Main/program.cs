@@ -45,14 +45,14 @@ namespace P0_KemoAllen
             do
             {
                 Console.WriteLine($"Hello {user.FirstName} What would you like to do?");
-                Console.WriteLine("\tThe Menu options are:\n\torder - To make a new order\n\td1 - Display a customer's order history"
-                +"\n\td2 - Display a location's order history\n\td3 - Display an order's content\n\tsearch - To lookup a customer\n\tq - Quit");
+                Console.WriteLine("\tThe Menu options are:\n\to - Make a new order\n\td1 - Display a customer's order history"
+                +"\n\td2 - Display a location's order history\n\td3 - Display an order's content\n\ts - Lookup a customer\n\tq - Quit");
                 menuChoice = Console.ReadLine().Trim();
 
                 //user portal
                 switch(menuChoice)
                 {
-                case "order":
+                case "o": //Processes an order
                 storeContext.DisplayRecommendation(user);
                 id = storeContext.EditOrder(user); //adds or remove items from an order list
                 DisplayOrder(id);
@@ -68,7 +68,7 @@ namespace P0_KemoAllen
                 case "d2"://shows the order history of a store
                 DisplayLoctionHistory();
                 break;
-                case "search"://searches for other customers by name
+                case "s"://searches for other customers by name
                 SearchUser();
                 break;
                 default:
@@ -114,6 +114,7 @@ namespace P0_KemoAllen
             {
                 Console.WriteLine("Sorry we couldn't find that customer.");
             }
+            Console.WriteLine();
 
         }//DisplayCustomerHistory
 
@@ -139,25 +140,21 @@ namespace P0_KemoAllen
                     }
                 }
 
-                if(orderFound)
-                {
-                    //order.DisplayDetails();
-                }
-                else
+                if(!orderFound)
                 {
                     Console.WriteLine("Sorry we couldn't find that order.");
                 }
+            
             }
             else
             {
                 Console.WriteLine("Sorry that order id is invalid.");
             }
+            Console.WriteLine();
         }//Display Order
 
         public static void DisplayLoctionHistory()
         {
-            //bool locationFound = false;
-            //Location loc = new Location();
             String locName;
             bool locationFound = false;
 
@@ -173,6 +170,7 @@ namespace P0_KemoAllen
                 if(order.orderLocation.LocationName == locName)
                  {
                      order.DisplayDetails();
+                     locationFound = true;
                  }
             }
 
@@ -180,7 +178,7 @@ namespace P0_KemoAllen
             {
                 Console.WriteLine("Sorry we could't find that location.");
             }
-            
+            Console.WriteLine();
         }//DisplayLoctionHistory
         public static void SearchUser()
         {
@@ -207,7 +205,7 @@ namespace P0_KemoAllen
             {
                 Console.WriteLine(user.UserName + "'s user id is: " + user.userId);
             }
-
+            Console.WriteLine();
         }//SearchUser
 
     }//class

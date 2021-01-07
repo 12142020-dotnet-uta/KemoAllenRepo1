@@ -53,6 +53,8 @@ namespace P0_KemoAllen
         //Price
         private decimal price;
 
+        //set method price
+
         public decimal getPrice()
         {
             return price;
