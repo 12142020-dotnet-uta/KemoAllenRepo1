@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using RepositoryLayer;
+using BusinessLayer;
+
 
 namespace P1_KemoAllen
 {
@@ -24,6 +27,10 @@ namespace P1_KemoAllen
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.AddScoped<StoreBusinessClass>();
+            services.AddScoped<StoreMapper>();
+            services.AddScoped<StoreRepository>();
+            services.AddScoped<Store_DbContext>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

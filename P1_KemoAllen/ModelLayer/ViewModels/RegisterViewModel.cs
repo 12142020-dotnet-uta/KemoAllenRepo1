@@ -3,12 +3,13 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ModelLayer.ViewModels
 {
-    public class CustomerViewModel
+    public class RegisterViewModel
     {
-        public CustomerViewModel()
+        public RegisterViewModel()
         {
         }
-        public Guid userId { get; set; } = Guid.NewGuid();
+
+		public Guid userId { get; set; } = Guid.NewGuid();
 		//User Name
 		[StringLength(20, ErrorMessage = "The user name must be from 1 to 20 characters.", MinimumLength = 1)]
 		[RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Use letters only please")]
@@ -29,10 +30,10 @@ namespace ModelLayer.ViewModels
 		[Display(Name = "Last Name")]
 		public string LastName { get; set; }
 
-		//View order history
-
-		//Pfp
-		//public IFormFile IformFileImage { get; set; }
-		//public string JpgStringImage { get; set; }
+		//Password
+		[Required]
+		[Display(Name = "Password")]
+		[DataType(DataType.Password)]
+		public string Password { get; set; }
 	}
 }

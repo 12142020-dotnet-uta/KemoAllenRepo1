@@ -1,0 +1,40 @@
+﻿@model ModelLayer.ViewModels.OrderViewModel
+
+@{
+    ViewData["Title"] = "MakeOrder";
+}
+
+<h1>Make an Order</h1>
+
+<h4>OrderViewModel</h4>
+<hr />
+<div calss ="row">
+    <div class="col-md-4">
+        <form asp-action="MakeOrder">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <!--Figure how to auto populate from db options-->
+                <label asp-for="LocationName" class="control-label">Location</label>
+                <select>
+                    <option value="Walmart">Walmart</option>
+                    <option value="Kroger">Kroger</option>
+                </select>
+            </div>
+            <div>
+                <!--Display unit price for selected item-->
+                <label asp-for="ProductName" class="control-label">Product</label>
+                <select>
+                    <option value="Apple">Apple</option>
+                    <option value="Rice">Rice</option>
+                </select>
+            </div>
+            <div>
+                <label asp-for="Quantity" class="control-label">Quantity</label>
+                <input type="number" id="Quantity" name="Quantity" min="0" max="10" />
+            </div>
+            <!--value equals success page-->
+            <input type="submit" value="" />
+
+        </form>
+    </div>
+</div>

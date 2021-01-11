@@ -11,9 +11,31 @@ namespace BusinessLayer
 
         public CustomerViewModel CovertCustomerToCustomerViewModel(Customer customer)
         {
+            CustomerViewModel customerViewModel = new CustomerViewModel()
+            {
+                FirstName = customer.FirstName,
+                LastName = customer.LastName,
+                UserName = customer.UserName,
+                //image
+            };
 
+            return customerViewModel;
         }
 
-        //handling image
+        //public RegisterViewModel ConvertCustomerToRegisterViewModel(Customer customer)
+        //{
+        //    RegisterViewModel registerViewModel = new RegisterViewModel()
+        //    {
+        //        FirstName = customer.FirstName,
+        //        LastName = customer.LastName,
+        //        UserName = customer.UserName,
+        //        Password = customer.Password
+        //        //image
+        //    };
+
+        //    return registerViewModel;
+        //}
+
+        
     }
 }

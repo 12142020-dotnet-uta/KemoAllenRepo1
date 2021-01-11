@@ -35,15 +35,22 @@ namespace ModelLayer
             get { return lastName; }
             set { lastName = value; }
         }
-
+        //User name
         private string userName;
         public string UserName
         {
             get { return userName; }
             set { userName = value; }
         }
+        //User's password
+        private string password;
+        public string Password
+        {
+            get { return password; }
+            set { password = value; }
+        }
 
-        public byte[] ByteArrayImage { get; set; }
+        //public byte[] ByteArrayImage { get; set; }
 
         private bool recommendProduct = false;
         public bool getRecommendStatus()

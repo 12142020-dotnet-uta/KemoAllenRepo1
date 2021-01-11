@@ -1,0 +1,39 @@
+﻿@model ModelLayer.ViewModels.CustomerViewModel
+
+@{
+    ViewData["Title"] = "Edit Customer";
+}
+
+<h1>EditCustomer</h1>
+
+<h4>Customer View Model</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="EditedCustomer" enctype="multipart/form-data" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="userId" class="control-label" />
+                <input asp-for="userId" class="form-control" />
+                <span asp-validation-for="userId" class="text-danger" />
+            </div>
+            <div class="form-group">
+                <label asp-for="FirstName" class="control-label" />
+                <input asp-for="FirstName" class="form-control" />
+                <span asp-validation-for="FirstName" class="text-danger" />
+            </div>
+            <div class="form-group">
+                <label asp-for="LastName" class="control-label" />
+                <input asp-for="LastName" class="form-control" />
+                <span asp-validation-for="LastName" class="text-danger" />
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn-primary"/>
+            </div>
+            
+        </form>
+
+
+    </div>
+</div>
