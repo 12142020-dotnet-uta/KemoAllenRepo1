@@ -32,10 +32,17 @@ namespace P1_KemoAllen.Controllers
         [ActionName("LoginCustomer")]
         public ActionResult Login(LoginViewModel logInViewModel)
         {
-            //Depenedancy Injection
+            //Dependancy Injection
             CustomerViewModel customerViewModel = _businessLayer.LoginCustomer(logInViewModel);
 
             return View("DisplayCustomerDetails", customerViewModel);
+        }
+
+        [ActionName("LogoutCustomer")]
+        public ActionResult Logout()
+        {
+            //clear session data
+            return View("Index");
         }
 
         public ActionResult Details(int id)

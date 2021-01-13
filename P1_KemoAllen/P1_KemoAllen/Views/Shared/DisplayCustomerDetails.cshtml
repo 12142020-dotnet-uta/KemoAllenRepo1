@@ -1,8 +1,22 @@
 ﻿@model ModelLayer.ViewModels.CustomerViewModel
+@using Microsoft.AspNetCore.Http
 
 @{
     ViewData["Title"] = "Display Customer Details";
 }
+
+
+@*@{
+    @inject IHttpContextAccessor HttpContextAccessor
+    var isFiltered = HttpContextAccessor.HttpContext.Session.GetString("_Name");
+}
+
+<p id="UserName" style="display: none">@isFiltered</p>
+<script>
+    var content = document.getElementById("UserName").textContent;
+    console.log("content is " + content);
+    document.getElementById("Login").innerHTML = content;
+</script>*@
 
 <h1>DisplayCustomerDetails</h1>
 
@@ -34,12 +48,19 @@
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.UserName)
         </dd>
+        <dt class=" col-sm-2">
+            @Html.DisplayNameFor(model => model.DefaultLocationId)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.DefaultLocationId)
+        </dd>
 
     </d1>
 
 </div>
-
+<hr />
 <div>
-    <a asp-controller="Customer" asp-action="EditCustomer" asp-route-playerGuid="@Model.userId">Edit This User</a> |
-    <a asp-controller="Customer" asp-action="CustomersList">View A List Of All Customers</a> |
+    <a asp-controller="Customers" asp-action="EditCustomer" asp-route-userId="@Model.userId">Edit Profile</a> |
+    <a asp-controller="Order" asp-action="Order" asp-route-userId="@Model.userId">Make an Order HERE!</a> |
+    <a asp-controller="Customers" asp-action="CustomerList">View A List Of All Customers</a> |
 </div>

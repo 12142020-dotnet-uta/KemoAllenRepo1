@@ -9,14 +9,28 @@ using Microsoft.Extensions.Logging;
 namespace P1_KemoAllen.Controllers
 {
     public class UserController : Controller
-    {
+    { 
+
         private StoreBusinessClass _businessLayer;
         private readonly ILogger<UserController> _logger;
+
+        //Session
+        public const string SessionKeyName = "_Name";
+        //public const string SessionKeyPass = "_Pass";
+        public const string CustomerId = "_Id";
+        const string SessionKeyTime = "_Time";
+
+
 
         public UserController(StoreBusinessClass storeBusiness, ILogger<UserController> logger)
         {
             _businessLayer = storeBusiness;
             _logger = logger;
+        }
+
+        public ActionResult EditCustomer()
+        {
+            return View();
         }
 
         [HttpGet]
@@ -30,16 +44,25 @@ namespace P1_KemoAllen.Controllers
 
         [HttpPost]
         [ActionName("EditedCustomer")]
-        public ActionResult EditedCustomer(CustomerViewModel customerViewModel)
+        public ActionResult EditCustomer(CustomerViewModel customerViewModel)
         {
             if (!ModelState.IsValid) { return View(customerViewModel); }
 
             //business logic
             CustomerViewModel customerViewModel1 = _businessLayer.EditedCustomer(customerViewModel);
-            return View("DisplayCustomerDetails", customerViewModel1);
+
+            return RedirectToAction("DisplayCustomerDetails");
+            //return View("DisplayCustomerDetails", customerViewModel1);
         }
 
-        public IActionResult CustomersList()
+        //public ActionResult CustomerList()
+        //{
+        //    return View();
+        //}
+
+        [HttpGet]
+        [ActionName("DisplayUserDetails")]
+        public IActionResult CustomerList()
         {
             //Get list from business layer
             List<CustomerViewModel> customerViewModelList = _businessLayer.CustomerList();
@@ -47,9 +70,7 @@ namespace P1_KemoAllen.Controllers
             return View(customerViewModelList);
         }
 
-        [HttpGet]
-        [ActionName("DisplayUserDetails")]
-        public IActionResult DisplayCustomerDetails(Guid customerGuid)
+        public ActionResult DisplayCustomerDetails(Guid customerGuid)
         {
             //edit customer from business layer
             CustomerViewModel customerViewModel = _businessLayer.GetCustomer(customerGuid);

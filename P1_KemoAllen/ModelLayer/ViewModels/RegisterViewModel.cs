@@ -35,5 +35,9 @@ namespace ModelLayer.ViewModels
 		[Display(Name = "Password")]
 		[DataType(DataType.Password)]
 		public string Password { get; set; }
+
+		//default location
+		[Display(Name = "Location")]
+		public string LocationName { get; set; }
 	}
 }

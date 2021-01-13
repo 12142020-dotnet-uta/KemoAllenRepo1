@@ -26,13 +26,8 @@ namespace BusinessLayer
         /// <param name="loginViewModel"></param>
         /// <returns></returns>
         public CustomerViewModel LoginCustomer(LoginViewModel loginViewModel)
-        {
-            Customer customer = new Customer()
-            {
-                UserName = loginViewModel.UserName
-            };
-
-            Customer customer1 = _repository.LoginCustomer(customer);
+        {     
+            Customer customer1 = _repository.LoginCustomer(loginViewModel.UserName, loginViewModel.Password);
 
             CustomerViewModel customerViewModel = _mapper.CovertCustomerToCustomerViewModel(customer1);
 
@@ -46,8 +41,12 @@ namespace BusinessLayer
                 UserName = registerViewModel.UserName,
                 FirstName = registerViewModel.FirstName,
                 LastName = registerViewModel.LastName,
-                Password = registerViewModel.Password
+                Password = registerViewModel.Password,
+                DefaultLocation = _repository.SelectLocation(registerViewModel.LocationName)
             };
+
+            //add other tables
+            //_repository.DataToDb();
 
             Customer customer1 = _repository.RegisterCustomer(customer);
 
@@ -111,10 +110,10 @@ namespace BusinessLayer
             // get an instance of the player being edited.
             Customer customer = _repository.GetCustomerById(customerViewModel.userId);
 
-            customer.userId = customerViewModel.userId;
+            //customer.userId = customerViewModel.userId;
             customer.FirstName = customerViewModel.FirstName;
             customer.LastName = customerViewModel.LastName;
-            customer.UserName = customerViewModel.UserName;
+            //customer.UserName = customerViewModel.UserName;
 
             //customer.ByteArrayImage = _mapperClass.ConvertIformFileToByteArray(customerViewModel.IformFileImage);  //call the mapper class method ot convert the iformfile to byte[]
 
@@ -135,6 +134,36 @@ namespace BusinessLayer
             bool success = _repository.DeleteCustomerById(customerId);
 
             return success;
+        }
+        /// <summary>
+        /// Gets an OrderViewModel and converts it to a ProccessedOrderViewModel
+        /// </summary>
+        /// <param name="orderViewModel"></param>
+        /// <returns></returns>
+        public ProccessedOrderViewModel ProcessOrder(OrderViewModel orderViewModel)
+        {
+            //add other tables
+            //_repository.DataToDb();
+            Order order = null;
+            //Get location
+            ModelLayer.Location location = _repository.SelectLocation(orderViewModel.LocationName);
+            //Get item from inventory
+            Inventory inventory = _repository.SearchForInventoryProduct(orderViewModel.ProductName, location);
+            //Check quantity
+            bool quantityAvailable = _repository.CheckIfQuantityAvailable(inventory, orderViewModel.Quantity);
+            //Make changes to db
+            if (quantityAvailable)
+            {
+                order = _repository.MakeAnOrder(inventory, orderViewModel.Quantity);
+            }
+            else
+            {
+                //error
+            }
+
+            ProccessedOrderViewModel proccessedOrder = _mapper.ConvertOrderToProccesedOrder(order);
+
+            return proccessedOrder;
         }
 
 

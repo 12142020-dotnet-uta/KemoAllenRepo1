@@ -8,7 +8,7 @@ namespace ModelLayer.ViewModels
         public CustomerViewModel()
         {
         }
-        public Guid userId { get; set; } = Guid.NewGuid();
+		public Guid userId { get; set; }
 		//User Name
 		[StringLength(20, ErrorMessage = "The user name must be from 1 to 20 characters.", MinimumLength = 1)]
 		[RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Use letters only please")]
@@ -28,6 +28,9 @@ namespace ModelLayer.ViewModels
 		[Required]
 		[Display(Name = "Last Name")]
 		public string LastName { get; set; }
+
+		//default location
+		public Guid DefaultLocationId { get; set; }
 
 		//View order history
 

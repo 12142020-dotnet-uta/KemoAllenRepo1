@@ -16,6 +16,12 @@ namespace P1_KemoAllen.Controllers
         private StoreBusinessClass _businessLayer;
         private readonly ILogger<UserController> _logger;
 
+        public OrderController(StoreBusinessClass storeBusiness, ILogger<UserController> logger)
+        {
+            _businessLayer = storeBusiness;
+            _logger = logger;
+        }
+
         public ActionResult Order()
         {
             return View();
@@ -24,7 +30,27 @@ namespace P1_KemoAllen.Controllers
         [ActionName("MakeOrder")]
         public ActionResult Order(OrderViewModel orderViewModel)
         {
+            if (orderViewModel is null)
+            {
+                throw new ArgumentNullException(nameof(orderViewModel));
+            }
 
+            ProccessedOrderViewModel proccessedOrder = _businessLayer.ProcessOrder(orderViewModel);
+
+            return View("Success", proccessedOrder);
+            //return View();
+        }
+
+        //[HttpGet]
+        [ActionName("Success")]
+        public ActionResult Success(ProccessedOrderViewModel proccessedOrder)
+        {
+            return View();
+            //return RedirectToAction("MakeOrder");
+        }
+
+        public ActionResult Submit()
+        {
             return View();
         }
 

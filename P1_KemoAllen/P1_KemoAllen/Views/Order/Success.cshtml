@@ -1,3 +1,55 @@
-﻿@page
+﻿@model IEnumerable<ModelLayer.ViewModels.ProccessedOrderViewModel>;
+
 @{
+    ViewData["Title"] = "Display Order";
 }
+
+<h1>Return to Order</h1>
+
+<h4>Success</h4>
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Success">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.ProductName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Quantity)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.TotalPrice)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Quantity)
+                        </th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                    <tr>
+                        <th>
+                            @Html.DisplayFor(modelItem => item.ProductName)
+                        </th>
+                        <th>
+                            @Html.DisplayFor(modelItem => item.Quantity)
+                        </th>
+                        <th>
+                            @Html.DisplayFor(modelItem => item.TotalPrice)
+                        </th>
+                        <th>
+                            @Html.DisplayFor(modelItem => item.Quantity)
+                        </th>
+                    </tr>
+                    }
+                </tbody>
+
+            </table>
+
+        </form>
+    </div>
+ </div>

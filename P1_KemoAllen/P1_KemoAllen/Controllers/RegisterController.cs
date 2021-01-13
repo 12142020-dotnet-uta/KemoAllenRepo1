@@ -16,6 +16,11 @@ namespace P1_KemoAllen.Controllers
         private StoreBusinessClass _businessLayer;
         private readonly ILogger<UserController> _logger;
 
+        public RegisterController(StoreBusinessClass storeBusiness, ILogger<UserController> logger)
+        {
+            _businessLayer = storeBusiness;
+            _logger = logger;
+        }
 
         public ActionResult Register()
         {
@@ -25,7 +30,11 @@ namespace P1_KemoAllen.Controllers
         [ActionName("RegisterCustomer")]
         public ActionResult Register(RegisterViewModel registerViewModel)
         {
-            //Depenedancy Injection
+            if (registerViewModel is null)
+            {
+                throw new ArgumentNullException(nameof(registerViewModel));
+            }
+            //Add new customer
             CustomerViewModel customerViewModel = _businessLayer.RegisterCustomer(registerViewModel);
 
             return View("DisplayCustomerDetails", customerViewModel);

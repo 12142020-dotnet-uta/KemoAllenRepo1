@@ -16,25 +16,27 @@ namespace BusinessLayer
                 FirstName = customer.FirstName,
                 LastName = customer.LastName,
                 UserName = customer.UserName,
+                userId = customer.userId
+                //DefaultLocationId = customer.DefaultLocation.locationGuid
                 //image
             };
 
             return customerViewModel;
         }
 
-        //public RegisterViewModel ConvertCustomerToRegisterViewModel(Customer customer)
-        //{
-        //    RegisterViewModel registerViewModel = new RegisterViewModel()
-        //    {
-        //        FirstName = customer.FirstName,
-        //        LastName = customer.LastName,
-        //        UserName = customer.UserName,
-        //        Password = customer.Password
-        //        //image
-        //    };
+        public ProccessedOrderViewModel ConvertOrderToProccesedOrder(Order order)
+        {
+            ProccessedOrderViewModel proccessedOrder = new ProccessedOrderViewModel()
+            {
+                ProductName = order.orderProduct.Description,
+                Quantity = order.orderQuantity,
+                LocationName = order.orderLocation.LocationName,
+                TotalPrice = order.getPrice()
 
-        //    return registerViewModel;
-        //}
+            };
+
+            return proccessedOrder;
+        }
 
         
     }

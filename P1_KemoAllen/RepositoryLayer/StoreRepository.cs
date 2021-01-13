@@ -33,6 +33,86 @@ namespace RepositoryLayer
             _logger = logger;
 
         }
+
+        public void DataToDb()
+        {
+            AddListItemsToDB();
+            NewLocations();
+            Location loc1 = null;
+            Location loc2 = null;
+
+            foreach (var loc in locations)
+            {
+                if (loc.LocationName == "Walmart")
+                {
+                    loc1 = loc;
+                    break;
+                }
+
+            }
+
+            foreach (var loc in locations)
+            {
+                if (loc.LocationName == "Kroger")
+                {
+                    loc2 = loc;
+                    break;
+                }
+
+            }
+            LoadItemsToInventory(loc1);
+            LoadItemsToInventory(loc2);
+
+
+        }
+
+        public void AddListItemsToDB()
+        {
+            string[] productNames = { "Apple", "Water", "Milk","Rice", "Cookies", "Cabbage"};
+            decimal[] productPrices = { 0.29m, 0.49m, 2.49m, 6.99m, 2.99m, 1.39m};
+            //use one strings and one object
+
+            if (products.Count() == 0)
+            {
+                for (int i = 0; i < productNames.Length; i++)
+                {
+                    Product p = new Product(productNames[i], productPrices[i]);
+                    products.Add(p);
+                }
+                _storeDbContext.SaveChanges();
+            }
+
+        }
+
+        public void NewLocations()
+        {
+            string[] locationNames = { "Walmart", "Kroger" };
+
+            if(locations.Count() == 0)
+            {
+                for(int i = 0; i < locationNames.Length; i++)
+                {
+                    Location l = new Location(locationNames[i]);
+                    locations.Add(l);
+                }
+                _storeDbContext.SaveChanges();
+            }
+        }
+
+        public void LoadItemsToInventory(Location loc)
+        {
+            //if (inventories.Count() == 0)
+            //{
+                foreach (var product in products)
+                {
+                    Inventory inv = new Inventory(product, loc);
+                    inventories.Add(inv);
+
+                }
+            //}
+            _storeDbContext.SaveChanges();
+        }
+
         /// <summary>
         /// Checks to see if a user with the same username already exists.
         /// If the username is not unique, registration will be rejected.
@@ -47,12 +127,14 @@ namespace RepositoryLayer
 
             if (!customerAlreadyExists)
             {
+                _logger.LogInformation("Trying to add new customer");
                 customer1 = new Customer()
                 {
                     FirstName = customer.FirstName,
                     LastName = customer.LastName,
                     UserName = customer.UserName,
-                    Password = customer.Password
+                    Password = customer.Password,
+                    DefaultLocation = customer.DefaultLocation
                 };
                 customers.Add(customer1);
                 _storeDbContext.SaveChanges();
@@ -60,7 +142,7 @@ namespace RepositoryLayer
                 try
                 {
                     Customer customer2 = customers.FirstOrDefault(x => x.userId == customer1.userId);
-                    return customer2;
+
                 }
                 catch (ArgumentNullException E)
                 {
@@ -72,18 +154,18 @@ namespace RepositoryLayer
             {
                 //Error message
             }
-
             return customer1;
+       
         }
 
-        public Customer LoginCustomer(Customer customer)
+        public Customer LoginCustomer(string userName, string password)
         {
-            Customer customer1 = customers.FirstOrDefault(x => x.FirstName == customer.FirstName && x.LastName == customer.LastName);
+            Customer customer1 = customers.FirstOrDefault(x => x.UserName == userName && x.Password == password);
 
             if(customer1 == null)
             {
                 //Error message
-
+                _logger.LogInformation("Couldn't find user.");
             }
 
             return customer1;
@@ -108,7 +190,8 @@ namespace RepositoryLayer
             //transfer over new values
             customer1.FirstName = customer.FirstName;
             customer1.LastName = customer.LastName;
-            customer1.UserName = customer.UserName;
+            customer1.DefaultLocation = customer.DefaultLocation;
+            //customer1.UserName = customer.UserName;
             //other stuff
             _storeDbContext.SaveChanges();
 
@@ -120,7 +203,7 @@ namespace RepositoryLayer
         }
 
         /// <summary>
-        /// Gets a location from the database
+        /// Gets a location from the database based on name
         /// </summary>
         /// <returns>Location</returns>
         public Location SelectLocation(string locName)
@@ -156,19 +239,60 @@ namespace RepositoryLayer
         }
 
         /// <summary>
+        /// Gets a location from the database based on id
+        /// </summary>
+        /// <returns>Location</returns>
+        public Location SelectLocation(Guid locGuid)
+        {
+            Location loc = null;
+            bool locationFound = false;
+
+            //Message to user
+            //DisplayAvailableLocations();
+
+            //get from web page
+            //locName = Console.ReadLine();
+
+            //drop down for locations
+            //make a view for locations
+            foreach (var location in locations)
+            {
+                if (location.locationGuid.Equals(locGuid))
+                {
+                    loc = location;
+                    locationFound = true;
+                    break;
+                }
+            }
+
+            if (!locationFound)
+            {
+                //Error couldn't find location in db
+
+            }
+
+            return loc;
+        }
+
+        /// <summary>
         /// Sends completed orders to the database
         /// </summary>
         /// <param name="customer"></param>
         /// <param name="location"></param>
-        public void MakeAnOrder(Customer customer, Location location)
+        public Order MakeAnOrder(Inventory inventory, int numItems)
         {
-            //ViewModel for data from webpage. Pass into here
-            Guid id = Guid.NewGuid();
-            int numOfItem;
-            Inventory inv;
-            Location loc;
-            bool quantityIsAvailable;
+            Order order = new Order();
+            inventory.inventoryQuantity -= numItems;
 
+            order.orderLocation = inventory.inventoryLocation;
+            order.orderProduct = inventory.inventoryProduct;
+            order.orderQuantity = numItems;
+            order.CalculatePrice();
+
+            orders.Add(order);
+            _storeDbContext.SaveChanges();
+
+            return order;
         }
 
         /// <summary>
@@ -187,15 +311,43 @@ namespace RepositoryLayer
         /// And also prevents the user from taking too many items at once.
         /// </summary>
         /// <returns></returns>
-        public bool CheckIfQuantityAvailable()
+        public bool CheckIfQuantityAvailable(Inventory inventory, int numItems)
         {
             bool available = false;
-            //Prevent user form ordering too much multiple times
+
+            //Check if the Product requested exists
+            if (inventory != null)
+            {
+                //Check if the quantity is available
+                if (inventory.inventoryQuantity > 0)
+                {
+                    if (numItems > 10)
+                    {
+                        Console.WriteLine("Sorry. You asked for " + numItems + $" {inventory.inventoryProduct.Description}(s), but the limit is 10.");
+
+                    }
+                    else if (numItems > 0)
+                    {
+                        if (inventory.inventoryQuantity < numItems)
+                        {
+                            Console.WriteLine("Sorry. You asked for " + numItems + $" {inventory.inventoryProduct.Description}(s),"
+                             + $" but there is only {inventory.inventoryQuantity} left.");
+                        }
+                        else
+                        {
+                            available = true;
+
+                        }
+                    }
+                }
+
+            }
+            
             return available;
         }
 
         /// <summary>
-        /// Searches 
+        /// Searches for the inventory product with the matching location
         /// </summary>
         /// <param name="itemName"></param>
         /// <param name="location"></param>
@@ -203,6 +355,26 @@ namespace RepositoryLayer
         public Inventory SearchForInventoryProduct(String itemName, Location location)
         {
             Inventory inv = null;
+
+            try
+            {
+                foreach (var inventory in inventories)
+                {
+                    if (inventory.inventoryLocation == location)
+                    {
+                        if (inventory.inventoryProduct.Description == itemName)
+                        {
+                            inv = inventory;
+                            break;
+                        }
+                    }
+                }
+            }
+            catch(ArgumentNullException E)
+            {
+                _logger.LogInformation($"There was an error with getting an inventory item.{E}");
+            }
+
 
             return inv;
         }

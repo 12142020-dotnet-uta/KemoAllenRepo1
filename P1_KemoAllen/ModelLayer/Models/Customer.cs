@@ -50,6 +50,8 @@ namespace ModelLayer
             set { password = value; }
         }
 
+        public Location DefaultLocation { get; set; }
+
         //public byte[] ByteArrayImage { get; set; }
 
         private bool recommendProduct = false;

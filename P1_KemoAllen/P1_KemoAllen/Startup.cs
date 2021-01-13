@@ -10,7 +10,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RepositoryLayer;
 using BusinessLayer;
-
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.AspNetCore.Http;
 
 namespace P1_KemoAllen
 {
@@ -26,6 +27,19 @@ namespace P1_KemoAllen
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            ////Session - review in detail
+            //services.AddDistributedMemoryCache();
+
+            //services.AddSession(options =>
+            //{
+            //    //options.IdleTimeout = TimeSpan.FromSeconds(10);
+            //    options.Cookie.HttpOnly = true;
+            //    //options.Cookie.Name = "";
+            //    options.Cookie.IsEssential = true;
+            //});
+            ////Doesn't load automatically
+            //services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
             services.AddControllersWithViews();
             services.AddScoped<StoreBusinessClass>();
             services.AddScoped<StoreMapper>();
@@ -51,7 +65,10 @@ namespace P1_KemoAllen
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
+
+            //app.UseSession();
 
             app.UseEndpoints(endpoints =>
             {
