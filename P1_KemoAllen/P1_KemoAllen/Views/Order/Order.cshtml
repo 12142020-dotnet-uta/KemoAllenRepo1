@@ -1,0 +1,69 @@
+﻿@model ModelLayer.ViewModels.OrderViewModel
+@*@using Microsoft.AspNetCore.Http*@
+
+@{
+    ViewData["Title"] = "Order";
+}
+
+@*@{
+        @inject IHttpContextAccessor HttpContextAccessor
+        var isFiltered = HttpContextAccessor.HttpContext.Session.GetString("_Name");
+    }
+
+    <p id="UserName" style="display: none">@isFiltered</p>
+    <script>
+        var content = document.getElementById("UserName").textContent;
+        console.log("content is " + content);
+        document.getElementById("Login").innerHTML = content;
+    </script>*@
+
+<h1>Make an Order</h1>
+
+<h4>OrderViewModel</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="MakeOrder">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <!--Figure how to auto populate from db options-->
+                <label asp-for="LocationName" class="control-label">Location</label>
+                @*@Html.DropDownListFor(m => m.LocationName, new SelectList(Enum.GetValues(typeof(Location))), "Select Location")*@
+                <select id="LocationName" name="LocationName">
+                    <option value="Walmart">Walmart</option>
+                    <option value="Kroger">Kroger</option>
+                </select>
+                <input type="hidden" asp-for="LocationName" />
+            </div>
+            <div>
+                <!--Display unit price for selected item-->
+                <label asp-for="ProductName" class="control-label">Product</label>
+                <select id="ProductName" name="ProductName">
+                    <option value="Apple">Apple</option>
+                    <option value="Rice">Rice</option>
+                    <option value="Water">Water</option>
+                    <option value="Milk">Milk</option>
+                    <option value="Cabbage">Cabbage</option>
+                    <option value="Cookies">Cookies</option>
+                </select>
+                <input type="hidden" asp-for="ProductName" />
+            </div>
+            <div>
+                <label asp-for="Quantity" class="control-label">Quantity</label>
+                <input type="number" id="Quantity" name="Quantity" min="0" max="10" />
+            </div>
+            <!--value equals success page-->
+            <input type="submit" value="Submit" class="btn btn-primary"/>
+
+        </form>
+    </div>
+</div>
+
+@*<sript type="text/javascript">
+    var x = document.quertSelector("LocationName");
+    output = x.value;
+</sript>*@
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

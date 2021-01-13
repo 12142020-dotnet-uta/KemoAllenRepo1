@@ -1,0 +1,49 @@
+﻿@model ModelLayer.ViewModels.CustomerViewModel
+@using Microsoft.AspNetCore.Http
+
+@{
+    ViewData["Title"] = "Edit Customer";
+}
+
+@*@{
+    @inject IHttpContextAccessor HttpContextAccessor
+    var isFiltered = HttpContextAccessor.HttpContext.Session.GetString("_Name");
+}
+
+<p id="UserName" style="display: none">@isFiltered</p>
+<script>var content = document.getElementById("UserName").textContent;
+    console.log("content is " + content);
+    document.getElementById("DisplayCustomerDetails").innerHTML = content;</script>*@
+
+<h1>EditCustomer</h1>
+
+<h4>Customer View Model</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="EditedCustomer" enctype="multipart/form-data" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="userId" class="control-label" />
+                <span asp-validation-for="userId" class="text-danger" />
+            </div>
+            <div class="form-group">
+                <label asp-for="FirstName" class="control-label" />
+                <input asp-for="FirstName" class="form-control" />
+                <span asp-validation-for="FirstName" class="text-danger" />
+            </div>
+            <div class="form-group">
+                <label asp-for="LastName" class="control-label" />
+                <input asp-for="LastName" class="form-control" />
+                <span asp-validation-for="LastName" class="text-danger" />
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn-primary" />
+            </div>
+
+        </form>
+
+
+    </div>
+</div>
